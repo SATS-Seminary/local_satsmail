@@ -10,8 +10,8 @@ import { createStore } from './lib/store';
 import './global.css';
 
 async function init() {
-    const viewTarget = document.getElementById('local-mail-view');
-    const navbarTarget = document.getElementById('local-mail-navbar');
+    const viewTarget = document.getElementById('local-satsmail-view');
+    const navbarTarget = document.getElementById('local-satsmail-navbar');
 
     // Get initial data from script tag.
     const data = window.local_satsmail_view_data;

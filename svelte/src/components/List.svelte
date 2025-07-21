@@ -36,7 +36,7 @@ South African Theological Seminary
                 animate:flip={{ delay: 400, duration: 400 }}
                 in:fade={{ delay: 400 }}
                 out:fade={{ duration: 400 }}
-                class="local-mail-list-message list-group-item list-group-item-action p-0"
+                class="local-satsmail-list-message list-group-item list-group-item-action p-0"
                 href={viewUrl(messageParams(message, i))}
                 class:list-group-item-primary={$store.selectedMessages.has(message.id)}
                 class:list-group-item-secondary={!message.unread &&
@@ -61,7 +61,7 @@ South African Theological Seminary
                             >
                                 <ListMessageSubject {store} {message} />
                                 <div
-                                    class="local-mail-list-message-labels-md d-flex text-truncate flex-shrink-0 justify-content-end"
+                                    class="local-satsmail-list-message-labels-md d-flex text-truncate flex-shrink-0 justify-content-end"
                                     style="max-width: 80%"
                                 >
                                     <ListMessageLabels {store} {message} />
@@ -88,7 +88,7 @@ South African Theological Seminary
                                 </div>
                                 <ListMessageStar {store} {message} />
                             </div>
-                            <div class="local-mail-list-message-labels d-flex flex-wrap mr-2">
+                            <div class="local-satsmail-list-message-labels d-flex flex-wrap mr-2">
                                 <ListMessageLabels {store} {message} />
                             </div>
                         </div>
@@ -101,20 +101,20 @@ South African Theological Seminary
 {/key}
 
 <style>
-    .local-mail-list-message {
+    .local-satsmail-list-message {
         color: var(--dark) !important;
     }
 
-    .local-mail-list-message:focus,
-    .local-mail-list-message :global(.btn:focus) {
+    .local-satsmail-list-message:focus,
+    .local-satsmail-list-message :global(.btn:focus) {
         z-index: 3;
     }
 
-    .local-mail-list-message-labels {
+    .local-satsmail-list-message-labels {
         margin-left: -0.5rem;
     }
 
-    .local-mail-list-message-labels-md {
+    .local-satsmail-list-message-labels-md {
         margin-left: auto;
         margin-bottom: -0.5rem;
     }

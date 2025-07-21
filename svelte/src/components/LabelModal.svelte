@@ -17,7 +17,7 @@ South African Theological Seminary
 
     let nameEl: HTMLElement;
 
-    $: id = `local-mail-label-modal-${label?.id || 'new'}`;
+    $: id = `local-satsmail-label-modal-${label?.id || 'new'}`;
     $: name = label?.name || '';
     $: selectedColor = label?.color || colors[0];
     $: emptyName = normalizeLabelName(name) == '';
@@ -43,7 +43,7 @@ South African Theological Seminary
 >
     <form on:submit|preventDefault={submit}>
         <div class="form-group mb-0">
-            <label for="local-mail-label-modal-name">{$store.strings.name}</label>
+            <label for="local-satsmail-label-modal-name">{$store.strings.name}</label>
             <input
                 type="text"
                 required
@@ -67,22 +67,22 @@ South African Theological Seminary
             <label for="{id}-color">
                 {$store.strings.color}
             </label>
-            <div role="radiogroup" class="local-mail-label-modal-color" id="{id}-color">
+            <div role="radiogroup" class="local-satsmail-label-modal-color" id="{id}-color">
                 {#each colors as color (color)}
                     <button
                         role="radio"
                         aria-checked={color == selectedColor}
                         tabindex="0"
                         title={$store.strings[`color${color}`]}
-                        class="local-mail-label-modal-color-option btn"
-                        style={`color: var(--local-mail-color-${color}-fg, var(--local-mail-color-gray-fg));` +
-                            `background-color: var(--local-mail-color-${color}-bg, var(--local-mail-color-gray-bg))`}
+                        class="local-satsmail-label-modal-color-option btn"
+                        style={`color: var(--local-satsmail-color-${color}-fg, var(--local-satsmail-color-gray-fg));` +
+                            `background-color: var(--local-satsmail-color-${color}-bg, var(--local-satsmail-color-gray-bg))`}
                         on:click|preventDefault={() => {
                             selectedColor = color;
                         }}
                     >
                         {#if color == selectedColor}
-                            <i class="fa fa-check local-mail-label-modal-color-option-check" />
+                            <i class="fa fa-check local-satsmail-label-modal-color-option-check" />
                         {:else}
                             <span aria-hidden="true">a</span>
                         {/if}
@@ -94,11 +94,11 @@ South African Theological Seminary
 </ModalDialog>
 
 <style>
-    .local-mail-label-modal-color {
+    .local-satsmail-label-modal-color {
         display: flex;
         flex-wrap: wrap;
     }
-    .local-mail-label-modal-color-option {
+    .local-satsmail-label-modal-color-option {
         width: 2rem;
         height: 2rem;
         margin-right: 0.5rem;
@@ -106,11 +106,11 @@ South African Theological Seminary
         display: flex;
         justify-content: center;
         align-items: center;
-        color: var(--local-mail-color-gray-fg);
-        background-color: var(--local-mail-color-gray-bg);
+        color: var(--local-satsmail-color-gray-fg);
+        background-color: var(--local-satsmail-color-gray-bg);
     }
 
-    .local-mail-label-modal-color-option:last-child {
+    .local-satsmail-label-modal-color-option:last-child {
         margin-right: 0;
     }
 </style>

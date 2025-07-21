@@ -16,11 +16,11 @@ South African Theological Seminary
         (file.filepath + file.filename).replace(/^\//, '');
 </script>
 
-<div class="local-mail-message-attachments d-sm-flex flex-wrap">
+<div class="local-satsmail-message-attachments d-sm-flex flex-wrap">
     {#each message.attachments as file}
         <a
             href={file.fileurl}
-            class="local-mail-message-attachments-file btn btn-light d-flex align-items-center px-2 py-1 mr-3 mb-3"
+            class="local-satsmail-message-attachments-file btn btn-light d-flex align-items-center px-2 py-1 mr-3 mb-3"
         >
             <img
                 aria-hidden="true"
@@ -57,26 +57,26 @@ South African Theological Seminary
 </div>
 
 <style>
-    .local-mail-message-attachments {
+    .local-satsmail-message-attachments {
         margin-top: 1rem;
         margin-right: -1rem;
     }
 
-    .local-mail-message-attachments a {
+    .local-satsmail-message-attachments a {
         min-width: 0;
         min-height: 3rem;
         line-height: 1.25;
     }
 
-    .local-mail-message-attachments-file:not(:hover) .fa-download {
+    .local-satsmail-message-attachments-file:not(:hover) .fa-download {
         display: none !important;
     }
-    .local-mail-message-attachments-file:hover img {
+    .local-satsmail-message-attachments-file:hover img {
         display: none !important;
     }
 
     @media (min-width: 576px) {
-        .local-mail-message-attachments {
+        .local-satsmail-message-attachments {
             margin-bottom: -1rem;
         }
     }

@@ -17,7 +17,7 @@ South African Theological Seminary
 
 {#if ['shortname', 'fullname'].includes(settings.coursebadges)}
     <span
-        class="local-mail-course-badge badge px-2 mr-2 mb-2"
+        class="local-satsmail-course-badge badge px-2 mr-2 mb-2"
         use:truncate={text}
         style="min-width: 3rem; max-width: calc({length}ch + 1.5rem)"
     >
@@ -26,11 +26,11 @@ South African Theological Seminary
 {/if}
 
 <style>
-    .local-mail-course-badge {
+    .local-satsmail-course-badge {
         font-size: inherit;
         font-weight: inherit;
-        color: var(--local-mail-color-gray-fg);
-        background-color: var(--local-mail-color-gray-bg);
+        color: var(--local-satsmail-color-gray-fg);
+        background-color: var(--local-satsmail-color-gray-bg);
         padding-top: 0;
         padding-bottom: 0;
         line-height: inherit;

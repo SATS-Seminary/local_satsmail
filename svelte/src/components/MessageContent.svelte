@@ -17,13 +17,13 @@ South African Theological Seminary
     });
 </script>
 
-<div class="local-mail-message-content" bind:this={node}>
+<div class="local-satsmail-message-content" bind:this={node}>
     <!-- eslint-disable-next-line svelte/no-at-html-tags -->
     {@html content}
 </div>
 
 <style>
-    .local-mail-message-content {
+    .local-satsmail-message-content {
         max-width: 60rem;
     }
 </style>

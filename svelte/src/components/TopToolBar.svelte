@@ -20,7 +20,7 @@ South African Theological Seminary
     export let store: Store;
 </script>
 
-<div role="toolbar" class="local-mail-toolbar d-flex w-100">
+<div role="toolbar" class="local-satsmail-toolbar d-flex w-100">
     {#if $store.message}
         <BackButton {store} />
     {:else}
@@ -66,7 +66,7 @@ South African Theological Seminary
 </div>
 
 <style>
-    .local-mail-toolbar {
+    .local-satsmail-toolbar {
         column-gap: 1rem;
     }
 </style>

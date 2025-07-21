@@ -57,7 +57,7 @@ South African Theological Seminary
 </script>
 
 <div
-    class="local-mail local-mail-navbar pop-over-region h-100"
+    class="local-satsmail local-satsmail-navbar pop-over-region h-100"
     class:popover-region-toggle={expanded}
     use:blur={closeMenu}
     use:busy={loading}
@@ -71,15 +71,15 @@ South African Theological Seminary
     >
         <i class="fa fa-fw fa-envelope-o icon m-0" aria-label={strings.plugginname} />
         {#if loading}
-            <div class="local-mail-navbar-spinner position-absolute">
+            <div class="local-satsmail-navbar-spinner position-absolute">
                 <i class="fa fa-fw fa-spinner fa-pulse text-primary" />
             </div>
         {:else if unread > 0}
-            <div class="local-mail-navbar-count count-container">{formatNumber(unread)}</div>
+            <div class="local-satsmail-navbar-count count-container">{formatNumber(unread)}</div>
         {/if}
     </a>
     {#if expanded}
-        <div class="local-mail-navbar-popover popover-region-container">
+        <div class="local-satsmail-navbar-popover popover-region-container">
             <div class="d-flex justify-content-between p-2">
                 <ComposeButton {strings} onClick={handleComposeClick} />
                 <PreferencesButton {strings} onClick={handlePreferencesClick} />
@@ -99,16 +99,16 @@ South African Theological Seminary
 </div>
 
 <style>
-    .local-mail-navbar-count {
+    .local-satsmail-navbar-count {
         top: 50% !important;
         transform: translateY(-16px);
     }
 
-    .local-mail-navbar.popover-region-toggle::after {
+    .local-satsmail-navbar.popover-region-toggle::after {
         border-bottom-color: var(--light, var(--bs-gray-100));
     }
 
-    .local-mail-navbar-popover {
+    .local-satsmail-navbar-popover {
         width: 20rem;
         height: auto;
         bottom: unset;
@@ -116,21 +116,21 @@ South African Theological Seminary
         background-color: var(--light, var(--bs-gray-100));
     }
 
-    .local-mail-navbar-popover :global(.list-group-item:not(.list-group-item-primary)) {
+    .local-satsmail-navbar-popover :global(.list-group-item:not(.list-group-item-primary)) {
         background-color: transparent;
     }
 
-    .local-mail-navbar-popover :global(.list-group-item:not(.list-group-item-primary):hover) {
+    .local-satsmail-navbar-popover :global(.list-group-item:not(.list-group-item-primary):hover) {
         background-color: rgba(0, 0, 0, 0.025);
     }
 
-    .local-mail-navbar-spinner {
+    .local-satsmail-navbar-spinner {
         top: 50% !important;
         right: 0;
         transform: translateY(-18px);
     }
 
-    .local-mail-navbar-spinner .fa {
+    .local-satsmail-navbar-spinner .fa {
         font-size: 16px;
     }
 </style>

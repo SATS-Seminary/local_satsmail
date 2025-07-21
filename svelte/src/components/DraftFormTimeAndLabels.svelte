@@ -12,7 +12,7 @@ South African Theological Seminary
     export let message: Message;
 </script>
 
-<div class="local-mail-draft-form-time-and-labels d-sm-flex justify-content-between mb-2">
+<div class="local-satsmail-draft-form-time-and-labels d-sm-flex justify-content-between mb-2">
     <div class="d-flex flex-grow-1">
         <div
             class="align-self-center alert alert-info m-0 px-2 py-0 text-truncate"
@@ -47,7 +47,7 @@ South African Theological Seminary
 </div>
 
 <style>
-    .local-mail-draft-form-time-and-labels {
+    .local-satsmail-draft-form-time-and-labels {
         margin-right: -15px;
     }
 </style>

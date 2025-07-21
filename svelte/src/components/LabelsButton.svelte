@@ -88,7 +88,7 @@ South African Theological Seminary
 <div class="btn-group" class:dropup={bottom} role="group" use:blur={closeMenu}>
     <button
         type="button"
-        class="local-mail-action-label-button btn dropdown-toggle"
+        class="local-satsmail-action-label-button btn dropdown-toggle"
         class:btn-secondary={!bottom}
         class:btn-light={bottom}
         class:disabled={!$store.selectedMessages.size}
@@ -104,7 +104,7 @@ South African Theological Seminary
             {#each $store.labels as label (label.id)}
                 <button
                     type="button"
-                    class="dropdown-item local-mail-action-label-button-item"
+                    class="dropdown-item local-satsmail-action-label-button-item"
                     on:click={() => toggleLabel(label.id)}
                 >
                     <i class="fa fa-fw {labelIconClass(label.id)}" />
@@ -117,7 +117,7 @@ South African Theological Seminary
             {#if applyEnabled}
                 <button
                     type="button"
-                    class="dropdown-item local-mail-action-label-button-item"
+                    class="dropdown-item local-satsmail-action-label-button-item"
                     on:click={applyLabels}
                 >
                     {$store.strings.apply}
@@ -125,7 +125,7 @@ South African Theological Seminary
             {:else}
                 <button
                     type="button"
-                    class="dropdown-item local-mail-action-label-button-item"
+                    class="dropdown-item local-satsmail-action-label-button-item"
                     on:click={newLabel}
                 >
                     {$store.strings.newlabel}
@@ -139,7 +139,7 @@ South African Theological Seminary
 </div>
 
 <style>
-    .local-mail-action-label-button::after {
+    .local-satsmail-action-label-button::after {
         display: none !important;
     }
 </style>

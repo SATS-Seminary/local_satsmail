@@ -98,7 +98,7 @@ function local_satsmail_render_navbar_output(\renderer_base $renderer) {
         'class' => 'nav-link btn h-100 d-flex align-items-center px-2 py-0',
         'title' => strings::get('pluginname'),
     ]);
-    $output = html_writer::div($link, 'popover-region', ['id' => 'local-mail-navbar']);
+    $output = html_writer::div($link, 'popover-region', ['id' => 'local-satsmail-navbar']);
 
     if (!$ismailpage) {
         // Pass all data via a script tag to avoid web service requests.

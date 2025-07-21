@@ -90,7 +90,7 @@ South African Theological Seminary
 <div class="btn-group" class:dropup={bottom} use:blur={closeMenu}>
     <button
         type="button"
-        class="local-mail-action-more-button btn dropdown-toggle"
+        class="local-satsmail-action-more-button btn dropdown-toggle"
         class:btn-secondary={!bottom}
         class:btn-light={bottom}
         class:disabled
@@ -180,7 +180,7 @@ South African Theological Seminary
 {/if}
 
 <style>
-    .local-mail-action-more-button::after {
+    .local-satsmail-action-more-button::after {
         display: none !important;
     }
 </style>

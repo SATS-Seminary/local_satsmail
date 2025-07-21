@@ -18,10 +18,10 @@ South African Theological Seminary
 
 <div class="form-inline justify-content-end mt-3">
     <div class="form-group">
-        <label for="local-mail-perpage-select">{$store.strings.messagesperpage}:</label>
+        <label for="local-satsmail-perpage-select">{$store.strings.messagesperpage}:</label>
         <select
-            id="local-mail-perpage-select"
-            class="local-mail-perpage-select-select custom-select"
+            id="local-satsmail-perpage-select"
+            class="local-satsmail-perpage-select-select custom-select"
             bind:value={selected}
             on:change={() => store.savePreferences({ perpage: selected })}
         >
@@ -33,7 +33,7 @@ South African Theological Seminary
 </div>
 
 <style>
-    .local-mail-perpage-select-select {
+    .local-satsmail-perpage-select-select {
         width: auto;
         margin-left: 0.5rem;
     }

@@ -98,7 +98,7 @@ South African Theological Seminary
         {#each dropdownCourses as course (course.id)}
             <button
                 type="button"
-                class="local-mail-select-course-item dropdown-item d-flex align-items-center"
+                class="local-satsmail-select-course-item dropdown-item d-flex align-items-center"
                 on:click={() => selectCourse(course)}
             >
                 <span class="text-truncate">
@@ -106,7 +106,7 @@ South African Theological Seminary
                     {@html courseHtml(course)}
                 </span>
                 {#if course.unread > 0}
-                    <span class="local-mail-select-course-badge">{formatNumber(course.unread)}</span
+                    <span class="local-satsmail-select-course-badge">{formatNumber(course.unread)}</span
                     >
                 {/if}
             </button>
@@ -119,21 +119,21 @@ South African Theological Seminary
 </ComboBox>
 
 <style>
-    .local-mail-select-course-badge {
+    .local-satsmail-select-course-badge {
         padding-left: 1rem;
         margin-left: auto;
         font-weight: bold;
         font-size: 0.75em;
     }
 
-    .local-mail-select-course-item :global(mark) {
+    .local-satsmail-select-course-item :global(mark) {
         padding-left: 0;
         padding-right: 0;
         background-color: rgba(255, 255, 0, 0.2);
         color: inherit;
     }
 
-    .local-mail-select-course-item:not(:focus):hover {
+    .local-satsmail-select-course-item:not(:focus):hover {
         color: inherit;
         background-color: #eee;
     }

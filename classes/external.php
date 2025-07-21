@@ -1425,10 +1425,10 @@ class external extends \external_api {
         $PAGE->set_url(new \moodle_url('/local/satsmail/view.php', ['t' => 'drafts', 'm' => $message->id]));
         $PAGE->set_context(\context_system::instance());
         $options['autosave'] = false;
-        $attributes = ['id' => 'local-mail-compose-editor-' . $message->id];
+        $attributes = ['id' => 'local-satsmail-compose-editor-' . $message->id];
         $editor = new \MoodleQuickForm_editor('content', null, $attributes, $options);
         $editor->setValue(['text' => $data->content, 'format' => $data->format, 'itemid' => $data->draftitemid]);
-        $attributes = ['id' => 'local-mail-compose-filemanager-' . $message->id];
+        $attributes = ['id' => 'local-satsmail-compose-filemanager-' . $message->id];
         $filemanager = new \MoodleQuickForm_filemanager('attachments', null, $attributes, $options);
         $filemanager->setValue($data->draftitemid);
 

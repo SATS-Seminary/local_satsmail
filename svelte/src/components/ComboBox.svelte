@@ -47,13 +47,13 @@ South African Theological Seminary
     };
 </script>
 
-<div bind:this={node} class="local-mail-combo-box" use:blur={() => onBlur?.()}>
+<div bind:this={node} class="local-satsmail-combo-box" use:blur={() => onBlur?.()}>
     {#if mode == 'input'}
         <input
             type="text"
-            class="local-mail-combo-box-input form-control"
-            class:local-mail-combo-box-padding-for-one-icon={rightIconClass || middleIconClass}
-            class:local-mail-combo-box-padding-for-two-icons={rightIconClass && middleIconClass}
+            class="local-satsmail-combo-box-input form-control"
+            class:local-satsmail-combo-box-padding-for-one-icon={rightIconClass || middleIconClass}
+            class:local-satsmail-combo-box-padding-for-two-icons={rightIconClass && middleIconClass}
             class:is-invalid={invalid}
             placeholder={inputPlaceholder}
             aria-label={inputPlaceholder}
@@ -66,10 +66,10 @@ South African Theological Seminary
     {:else if mode == 'button'}
         <button
             type="button"
-            class="local-mail-combo-box-button form-control btn {buttonClass}"
-            class:local-mail-combo-box-button-default={buttonClass == ''}
-            class:local-mail-combo-box-padding-for-one-icon={rightIconClass && !middleIconClass}
-            class:local-mail-combo-box-padding-for-two-icons={middleIconClass}
+            class="local-satsmail-combo-box-button form-control btn {buttonClass}"
+            class:local-satsmail-combo-box-button-default={buttonClass == ''}
+            class:local-satsmail-combo-box-padding-for-one-icon={rightIconClass && !middleIconClass}
+            class:local-satsmail-combo-box-padding-for-two-icons={middleIconClass}
             use:truncate={buttonText}
             on:click={onButtonClick}
         >
@@ -79,22 +79,22 @@ South African Theological Seminary
         </button>
     {:else}
         <div
-            class="local-mail-combo-box-readonly form-control {readonlyClass}"
-            class:local-mail-combo-box-readonly-default={readonlyClass == ''}
+            class="local-satsmail-combo-box-readonly form-control {readonlyClass}"
+            class:local-satsmail-combo-box-readonly-default={readonlyClass == ''}
             use:truncate={readonlyText}
         >
             {readonlyText}
         </div>
     {/if}
 
-    <div class="local-mail-combo-box-left-icon">
+    <div class="local-satsmail-combo-box-left-icon">
         <i class="fa fa-fw {leftIconClass}" aria-hidden="true" />
     </div>
 
     {#if middleIconClass}
         <button
             type="button"
-            class="local-mail-combo-box-middle-icon btn"
+            class="local-satsmail-combo-box-middle-icon btn"
             title={middleIconLabel}
             on:click={onMiddleIconClick}
         >
@@ -105,7 +105,7 @@ South African Theological Seminary
     {#if rightIconClass}
         <button
             type="button"
-            class="local-mail-combo-box-right-icon btn"
+            class="local-satsmail-combo-box-right-icon btn"
             title={rightIconLabel}
             on:click={onRightIconClick}
         >
@@ -117,7 +117,7 @@ South African Theological Seminary
 </div>
 
 <style>
-    .local-mail-combo-box {
+    .local-satsmail-combo-box {
         display: flex;
         min-width: 0;
         flex-grow: 1;
@@ -126,7 +126,7 @@ South African Theological Seminary
         scroll-margin: 1rem;
     }
 
-    .local-mail-combo-box-left-icon {
+    .local-satsmail-combo-box-left-icon {
         padding-left: 0.75rem;
         top: 0;
         left: 0;
@@ -136,29 +136,29 @@ South African Theological Seminary
         align-items: center;
     }
 
-    .local-mail-combo-box-input {
+    .local-satsmail-combo-box-input {
         padding-left: 2.5rem;
         padding-right: 0.5rem;
     }
 
-    .local-mail-combo-box-button {
+    .local-satsmail-combo-box-button {
         padding: 0.375rem 0.5rem 0.375rem 2.5rem;
         margin-bottom: 0;
         text-align: left;
     }
 
-    .local-mail-combo-box-readonly {
+    .local-satsmail-combo-box-readonly {
         padding-left: 2.5rem;
         padding-right: 0.5rem;
         text-align: left;
     }
 
-    .local-mail-combo-box-button-default,
-    .local-mail-combo-box-readonly-default {
+    .local-satsmail-combo-box-button-default,
+    .local-satsmail-combo-box-readonly-default {
         border: 1px solid rgba(0, 0, 0, 0.125);
     }
 
-    .local-mail-combo-box-middle-icon {
+    .local-satsmail-combo-box-middle-icon {
         position: absolute;
         top: 0;
         right: 2.5rem;
@@ -169,7 +169,7 @@ South African Theological Seminary
         padding-right: 0.5rem;
     }
 
-    .local-mail-combo-box-right-icon {
+    .local-satsmail-combo-box-right-icon {
         position: absolute;
         top: 0;
         right: 0;
@@ -180,50 +180,50 @@ South African Theological Seminary
         padding-right: 0.5rem;
     }
 
-    .local-mail-combo-box-padding-for-one-icon.form-control {
+    .local-satsmail-combo-box-padding-for-one-icon.form-control {
         padding-right: 2.5rem !important;
     }
 
-    .local-mail-combo-box-padding-for-two-icons.form-control {
+    .local-satsmail-combo-box-padding-for-two-icons.form-control {
         padding-right: 5rem !important;
     }
 
-    .local-mail-combo-box > .form-control.is-invalid {
+    .local-satsmail-combo-box > .form-control.is-invalid {
         background: none;
     }
 
-    .local-mail-combo-box > :global(.dropdown-menu) {
+    .local-satsmail-combo-box > :global(.dropdown-menu) {
         max-width: calc(100vw / var(--appzoom, 1) - 30px);
     }
 
-    :global(.list-group) > .local-mail-combo-box {
+    :global(.list-group) > .local-satsmail-combo-box {
         padding: 0;
     }
 
-    :global(.list-group) > .local-mail-combo-box > .form-control {
+    :global(.list-group) > .local-satsmail-combo-box > .form-control {
         padding-left: 2.75rem !important;
     }
 
-    :global(.list-group) > .local-mail-combo-box .local-mail-combo-box-left-icon {
+    :global(.list-group) > .local-satsmail-combo-box .local-satsmail-combo-box-left-icon {
         padding-left: 1rem;
     }
 
-    :global(.list-group) > .local-mail-combo-box > .form-control {
+    :global(.list-group) > .local-satsmail-combo-box > .form-control {
         font-size: inherit;
         height: auto;
         padding-top: 0.5rem;
         padding-bottom: 0.5rem;
     }
 
-    :global(.local-mail-navbar-popover) .local-mail-combo-box > :global(.dropdown-menu) {
+    :global(.local-satsmail-navbar-popover) .local-satsmail-combo-box > :global(.dropdown-menu) {
         max-width: 100%;
     }
 
-    :global(.local-mail-navbar-popover) .local-mail-combo-box > .form-control {
+    :global(.local-satsmail-navbar-popover) .local-satsmail-combo-box > .form-control {
         border-radius: 0;
     }
 
-    :global(.list-group) > .local-mail-combo-box:not(:last-child) > .form-control {
+    :global(.list-group) > .local-satsmail-combo-box:not(:last-child) > .form-control {
         border-bottom-left-radius: 0;
         border-bottom-right-radius: 0;
     }

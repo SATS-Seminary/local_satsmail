@@ -20,7 +20,7 @@ South African Theological Seminary
     {@const users = Array.from(recipients.values()).filter((user) => user.type == type)}
     {#if users.length}
         <div transition:fade class=" d-flex mb-2">
-            <div class="local-mail-draft-form-recipients-type flex-shrink-0 py-2 mr-2">
+            <div class="local-satsmail-draft-form-recipients-type flex-shrink-0 py-2 mr-2">
                 {$store.strings[type]}:
             </div>
             <div class="d-flex flex-wrap" style="min-width: 0">
@@ -28,7 +28,7 @@ South African Theological Seminary
                     <div
                         transition:fade
                         use:truncate={user.fullname}
-                        class="local-mail-draft-form-recipients-user alert d-flex flex-shrink align-items-center border-0 p-0 mr-2 mb-2"
+                        class="local-satsmail-draft-form-recipients-user alert d-flex flex-shrink align-items-center border-0 p-0 mr-2 mb-2"
                         class:alert-danger={!user.isvalid}
                     >
                         <div class="d-flex m-1 mr-2">
@@ -63,17 +63,17 @@ South African Theological Seminary
 {/each}
 
 <style>
-    .local-mail-draft-form-recipients-type {
+    .local-satsmail-draft-form-recipients-type {
         width: 3rem;
     }
-    .local-mail-draft-form-recipients-user {
+    .local-satsmail-draft-form-recipients-user {
         border-radius: 0.5rem;
         max-width: 20rem;
     }
-    .local-mail-draft-form-recipients-user:not(.alert-danger) {
+    .local-satsmail-draft-form-recipients-user:not(.alert-danger) {
         background-color: #eee;
     }
-    .local-mail-draft-form-recipients-user .btn {
+    .local-satsmail-draft-form-recipients-user .btn {
         position: relative;
         z-index: 100;
     }

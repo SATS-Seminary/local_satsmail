@@ -20,7 +20,7 @@ South African Theological Seminary
         class="rounded-circle"
     />
 {:else}
-    <span class="local-mail-user-picture-fallback m-0">
+    <span class="local-satsmail-user-picture-fallback m-0">
         {#if user?.firstname || user?.lastname}
             {user.firstname.slice(0, 1)}{user.lastname.slice(0, 1)}
         {:else}
@@ -30,7 +30,7 @@ South African Theological Seminary
 {/if}
 
 <style>
-    .local-mail-user-picture-fallback {
+    .local-satsmail-user-picture-fallback {
         width: 35px;
         height: 35px;
         background-color: rgba(0, 0, 0, 0.1);

@@ -63,7 +63,7 @@ if ($user && course::get_by_user($user)) {
 
     // Print content.
     echo $OUTPUT->header();
-    echo html_writer::div('', '', ['id' => 'local-mail-view']);
+    echo html_writer::div('', '', ['id' => 'local-satsmail-view']);
     echo html_writer::script('window.local_satsmail_view_data = ' . json_encode($data));
     echo $sveltescript;
     echo $OUTPUT->footer();

@@ -41,14 +41,14 @@ South African Theological Seminary
 
 <div class="dropdown-menu show p-3 w-100" style="min-width: 18rem">
     <div class="form-group row">
-        <label for="local-mail-search-input-sendername" class="col-4 col-form-label pr-0">
+        <label for="local-satsmail-search-input-sendername" class="col-4 col-form-label pr-0">
             {$store.strings.searchfrom}
         </label>
         <div class="col-8">
             <input
                 type="text"
                 class="form-control"
-                id="local-mail-search-input-sendername"
+                id="local-satsmail-search-input-sendername"
                 bind:value={sendername}
                 bind:this={senderNode}
                 on:keyup={handleInputKey}
@@ -56,21 +56,21 @@ South African Theological Seminary
         </div>
     </div>
     <div class="form-group row">
-        <label for="local-mail-search-input-recipientname" class="col-4 col-form-label pr-0">
+        <label for="local-satsmail-search-input-recipientname" class="col-4 col-form-label pr-0">
             {$store.strings.searchto}
         </label>
         <div class="col-8 p">
             <input
                 type="text"
                 class="form-control"
-                id="local-mail-search-input-recipientname"
+                id="local-satsmail-search-input-recipientname"
                 bind:value={recipientname}
                 on:keyup={handleInputKey}
             />
         </div>
     </div>
     <div class="form-group row">
-        <label for="local-mail-search-input-maxdate" class="col-4 col-form-label pr-0">
+        <label for="local-satsmail-search-input-maxdate" class="col-4 col-form-label pr-0">
             {$store.strings.searchdate}
             <HelpPopover {store} message={$store.strings.searchdatehelp} />
         </label>
@@ -78,7 +78,7 @@ South African Theological Seminary
             <input
                 type="date"
                 class="form-control"
-                id="local-mail-search-input-maxdate"
+                id="local-satsmail-search-input-maxdate"
                 max={today}
                 value={maxdate}
                 on:input={updateMaxTime}
@@ -92,11 +92,11 @@ South African Theological Seminary
             <input
                 class="form-check-input"
                 type="checkbox"
-                id="local-mail-search-input-unread"
+                id="local-satsmail-search-input-unread"
                 bind:checked={unread}
                 on:keyup={handleInputKey}
             />
-            <label class="form-check-label" for="local-mail-search-input-unread">
+            <label class="form-check-label" for="local-satsmail-search-input-unread">
                 {$store.strings.searchunreadonly}
             </label>
         </div>
@@ -104,11 +104,11 @@ South African Theological Seminary
             <input
                 class="form-check-input"
                 type="checkbox"
-                id="local-mail-search-input-withfilesonly"
+                id="local-satsmail-search-input-withfilesonly"
                 bind:checked={withfilesonly}
                 on:keyup={handleInputKey}
             />
-            <label class="form-check-label" for="local-mail-search-input-withfilesonly">
+            <label class="form-check-label" for="local-satsmail-search-input-withfilesonly">
                 {$store.strings.searchhasattachments}
             </label>
         </div>

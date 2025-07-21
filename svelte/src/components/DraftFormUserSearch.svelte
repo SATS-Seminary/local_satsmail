@@ -113,7 +113,7 @@ South African Theological Seminary
     };
 </script>
 
-<div class="local-mail-draft-form-user-search form-group">
+<div class="local-satsmail-draft-form-user-search form-group">
     <ComboBox
         bind:this={comboBox}
         mode="input"
@@ -129,7 +129,7 @@ South African Theological Seminary
         onInput={() => search(true)}
     >
         <div
-            class="local-mail-draft-form-user-search-dropdown dropdown-menu p-0 w-100"
+            class="local-satsmail-draft-form-user-search-dropdown dropdown-menu p-0 w-100"
             class:show={expanded}
             style="min-width: 18rem"
         >
@@ -232,11 +232,11 @@ South African Theological Seminary
 </div>
 
 <style>
-    .local-mail-draft-form-user-search :global(.list-group-item) {
+    .local-satsmail-draft-form-user-search :global(.list-group-item) {
         background: none;
     }
 
-    .local-mail-draft-form-user-search-dropdown {
+    .local-satsmail-draft-form-user-search-dropdown {
         max-height: 50vh;
         max-width: 50rem;
         overflow-y: scroll;

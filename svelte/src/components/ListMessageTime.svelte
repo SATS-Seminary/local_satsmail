@@ -12,15 +12,15 @@ South African Theological Seminary
 </script>
 
 <span
-    class="local-mail-list-message-time d-shrink-0 text-nowrap text-right"
-    class:local-mail-list-message-time-md={$store.viewportSize >= ViewportSize.MD}
+    class="local-satsmail-list-message-time d-shrink-0 text-nowrap text-right"
+    class:local-satsmail-list-message-time-md={$store.viewportSize >= ViewportSize.MD}
     title={message.fulltime}
 >
     {message.shorttime}
 </span>
 
 <style>
-    .local-mail-list-message-time-md {
+    .local-satsmail-list-message-time-md {
         min-width: 5rem;
     }
 </style>

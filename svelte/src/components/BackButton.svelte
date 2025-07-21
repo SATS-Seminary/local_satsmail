@@ -11,7 +11,7 @@ South African Theological Seminary
 
 <button
     type="button"
-    class="local-mail-back-button btn btn-secondary"
+    class="local-satsmail-back-button btn btn-secondary"
     title={$store.strings.messagelist}
     on:click={() => store.navigateToList()}
 >
@@ -19,7 +19,7 @@ South African Theological Seminary
 </button>
 
 <style>
-    .local-mail-back-button {
+    .local-satsmail-back-button {
         margin-right: 13px;
     }
 </style>

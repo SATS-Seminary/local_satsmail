@@ -118,13 +118,13 @@ South African Theological Seminary
                 <div class="dropdown-divider my-0" />
             {/if}
             <a
-                class="dropdown-item local-mail-incremental-search-item"
+                class="dropdown-item local-satsmail-incremental-search-item"
                 class:font-weight-bold={message.unread}
                 href={viewUrl(messageParams(message, i))}
                 on:click={clickHandler(message, i)}
             >
                 <ListMessageSubject {store} {message} />
-                <div class="local-mail-incremental-search-muted d-flex">
+                <div class="local-satsmail-incremental-search-muted d-flex">
                     <ListMessageUsers {store} {message} />
                     <div title={message.fulltime} class="ml-auto">
                         {message.shorttime}
@@ -150,7 +150,7 @@ South African Theological Seminary
 {/if}
 
 <style>
-    .local-mail-incremental-search-muted {
+    .local-satsmail-incremental-search-muted {
         opacity: 0.6;
     }
 </style>

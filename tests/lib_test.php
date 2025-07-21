@@ -118,7 +118,7 @@ final class lib_test extends test\testcase {
 
         $result = local_satsmail_render_navbar_output($output);
 
-        self::assertStringContainsString('<div class="popover-region" id="local-mail-navbar">', $result);
+        self::assertStringContainsString('<div class="popover-region" id="local-satsmail-navbar">', $result);
         self::assertStringNotContainsString('<script>', $result);
 
         // Course page.
@@ -128,7 +128,7 @@ final class lib_test extends test\testcase {
 
         $result = local_satsmail_render_navbar_output($output);
 
-        self::assertStringContainsString('<div class="popover-region" id="local-mail-navbar">', $result);
+        self::assertStringContainsString('<div class="popover-region" id="local-satsmail-navbar">', $result);
         self::assertStringContainsString($renderer->svelte_script('src/navigation.ts'), $result);
         $expected = \html_writer::script('window.local_satsmail_navbar_data = ' . json_encode([
             'userid' => $user1->id,

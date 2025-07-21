@@ -81,7 +81,7 @@ South African Theological Seminary
               });
 </script>
 
-<div class="local-mail-paging-buttons d-flex" class:ml-auto={!bottom}>
+<div class="local-satsmail-paging-buttons d-flex" class:ml-auto={!bottom}>
     {#if !bottom}
         <div class="align-self-center text-nowrap">
             {pagingText}
@@ -120,7 +120,7 @@ South African Theological Seminary
 </div>
 
 <style>
-    .local-mail-paging-buttons {
+    .local-satsmail-paging-buttons {
         min-width: 0;
         column-gap: 1rem;
     }

@@ -14,7 +14,7 @@ South African Theological Seminary
 <div
     aria-live="polite"
     aria-atomic="true"
-    class="local-mail-toasts position-fixed d-flex flex-column-reverse p-3"
+    class="local-satsmail-toasts position-fixed d-flex flex-column-reverse p-3"
 >
     {#each $store.toasts as toast (toast)}
         <div
@@ -32,7 +32,7 @@ South African Theological Seminary
                 {#if toast.undo}
                     <button
                         type="button"
-                        class="local-mail-toast-undo btn font-weight-bold px-2 py-0 ml-3"
+                        class="local-satsmail-toast-undo btn font-weight-bold px-2 py-0 ml-3"
                         on:click={() => store.undo(toast)}
                     >
                         {$store.strings.undo}
@@ -53,21 +53,21 @@ South African Theological Seminary
 </div>
 
 <style>
-    .local-mail-toasts {
+    .local-satsmail-toasts {
         left: 0;
         bottom: 0;
         z-index: 1100;
         pointer-events: none;
     }
 
-    .local-mail-toasts .toast {
+    .local-satsmail-toasts .toast {
         opacity: 1;
         pointer-events: auto;
         flex-basis: 0;
         max-width: 400px;
     }
 
-    .local-mail-toast-undo {
+    .local-satsmail-toast-undo {
         color: var(--activitycontent);
     }
 </style>

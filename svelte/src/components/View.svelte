@@ -122,7 +122,7 @@ South African Theological Seminary
 
 <div
     use:busy={$store.loading}
-    class="local-mail local-mail-view container-fluid d-flex flex-column pt-2"
+    class="local-satsmail local-satsmail-view container-fluid d-flex flex-column pt-2"
     class:pt-3={!$store.mobile}
     class:p-md-4={!$store.mobile && $store.viewportSize >= ViewportSize.MD}
     class:min-vh-100={$store.viewportSize < ViewportSize.MD}
@@ -135,9 +135,9 @@ South African Theological Seminary
     <!-- Heading / search / compose button -->
     <div class="row align-items-center">
         {#if $store.mobile && $store.viewportSize < ViewportSize.LG}
-            <div class="local-mail-view-side-column" />
+            <div class="local-satsmail-view-side-column" />
         {:else}
-            <h1 class="h2 local-mail-view-side-column text-truncate mb-3 mb-md-4">
+            <h1 class="h2 local-satsmail-view-side-column text-truncate mb-3 mb-md-4">
                 {$store.strings.pluginname}
                 {#if heading && $store.viewportSize < ViewportSize.LG}
                     <i class="fa fa-angle-right mx-1" aria-hidden="true" />
@@ -147,11 +147,11 @@ South African Theological Seminary
         {/if}
 
         <div
-            class="local-mail-view-main-column d-flex mb-3"
+            class="local-satsmail-view-main-column d-flex mb-3"
             class:mb-4={$store.viewportSize >= ViewportSize.LG}
         >
             {#if tray}
-                <div class="local-mail-view-search">
+                <div class="local-satsmail-view-search">
                     <SearchBox {store} />
                 </div>
             {/if}
@@ -177,7 +177,7 @@ South African Theological Seminary
     {#if tray || $store.viewportSize >= ViewportSize.LG}
         <div class="row mb-3">
             {#if $store.viewportSize >= ViewportSize.LG}
-                <div class="local-mail-view-side-column">
+                <div class="local-satsmail-view-side-column">
                     <ComposeButton
                         strings={$store.strings}
                         onClick={() => store.createMessage($store.params.courseid)}
@@ -185,7 +185,7 @@ South African Theological Seminary
                 </div>
             {/if}
             {#if tray}
-                <div class="local-mail-view-main-column d-flex">
+                <div class="local-satsmail-view-main-column d-flex">
                     <TopToolBar {store} />
                 </div>
             {/if}
@@ -195,7 +195,7 @@ South African Theological Seminary
     <!-- List / Messaege -->
     <div class="row mb-3">
         {#if !tray || $store.viewportSize >= ViewportSize.LG}
-            <div class="local-mail-view-side-column">
+            <div class="local-satsmail-view-side-column">
                 <Menu
                     settings={$store.settings}
                     strings={$store.strings}
@@ -208,7 +208,7 @@ South African Theological Seminary
             </div>
         {/if}
         {#if tray}
-            <div class="local-mail-view-main-column">
+            <div class="local-satsmail-view-main-column">
                 {#if $store.message?.draft && $store.draftForm}
                     <DraftForm {store} message={$store.message} form={$store.draftForm} />
                 {:else if $store.message}
@@ -223,7 +223,7 @@ South African Theological Seminary
     </div>
 </div>
 
-<div class="local-mail" style="display: contents">
+<div class="local-satsmail" style="display: contents">
     {#if tray && $store.viewportSize < ViewportSize.MD}
         <BottomToolBar {store} />
     {/if}
@@ -237,12 +237,12 @@ South African Theological Seminary
 </div>
 
 <style>
-    .local-mail-view {
+    .local-satsmail-view {
         max-width: 100rem;
         padding-bottom: 0 !important;
     }
 
-    .local-mail-view-main-column {
+    .local-satsmail-view-main-column {
         padding-right: 15px;
         padding-left: 15px;
         flex-basis: 100%;
@@ -251,7 +251,7 @@ South African Theological Seminary
         column-gap: 1rem;
     }
 
-    .local-mail-view-side-column {
+    .local-satsmail-view-side-column {
         padding-right: 15px;
         padding-left: 15px;
         flex-basis: 100%;
@@ -259,22 +259,22 @@ South African Theological Seminary
         min-width: 0;
     }
 
-    .local-mail-view-search {
+    .local-satsmail-view-search {
         flex-grow: 1;
         margin-right: auto;
     }
 
     @media (min-width: 992px) {
-        .local-mail-view-main-column {
+        .local-satsmail-view-main-column {
             flex-basis: 75%;
             flex-shrink: 1;
         }
-        .local-mail-view-side-column {
+        .local-satsmail-view-side-column {
             flex-basis: 25%;
             flex-shrink: 1;
             max-width: 18rem;
         }
-        .local-mail-view-search {
+        .local-satsmail-view-search {
             max-width: 30rem;
         }
     }

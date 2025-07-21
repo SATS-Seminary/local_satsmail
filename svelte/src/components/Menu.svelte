@@ -56,7 +56,7 @@ South African Theological Seminary
 
 <div
     class="list-group"
-    class:local-mail-menu-navbar={navbar}
+    class:local-satsmail-menu-navbar={navbar}
     class:list-group-flush={navbar}
     class:border-top={navbar}
 >
@@ -145,9 +145,9 @@ South African Theological Seminary
 </div>
 
 <style>
-    .local-mail-menu-navbar :global(a:focus),
-    .local-mail-menu-navbar :global(.btn:focus),
-    .local-mail-menu-navbar :global(.form-control:focus) {
+    .local-satsmail-menu-navbar :global(a:focus),
+    .local-satsmail-menu-navbar :global(.btn:focus),
+    .local-satsmail-menu-navbar :global(.form-control:focus) {
         box-shadow: inset 0 0 0 0.2rem var(--primary);
         outline: none;
     }

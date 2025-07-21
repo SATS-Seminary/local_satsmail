@@ -35,7 +35,7 @@ async function init() {
 }
 
 function initNavbar(data: Record<string, unknown>) {
-    const target = document.getElementById('local-mail-navbar');
+    const target = document.getElementById('local-satsmail-navbar');
     if (target) {
         // Remove fallback link created in local_satsmail_render_navbar_output.
         target.innerHTML = '';

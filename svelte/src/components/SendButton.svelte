@@ -11,7 +11,7 @@ South African Theological Seminary
 
 <button
     type="button"
-    class="local-mail-action-send btn btn-primary flex-shrink-0 text-nowrap px-3 text-truncate ml-auto"
+    class="local-satsmail-action-send btn btn-primary flex-shrink-0 text-nowrap px-3 text-truncate ml-auto"
     title={$store.strings.send}
     on:click={() => store.sendMessage()}
 >

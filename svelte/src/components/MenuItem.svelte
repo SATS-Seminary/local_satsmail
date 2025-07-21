@@ -27,7 +27,7 @@ South African Theological Seminary
 </script>
 
 <a
-    class="local-mail-menu-item list-group-item list-group-item-action d-flex align-items-center px-3 py-2"
+    class="local-satsmail-menu-item list-group-item list-group-item-action d-flex align-items-center px-3 py-2"
     class:list-group-item-primary={active}
     class:disabled
     aria-current={active}
@@ -35,12 +35,12 @@ South African Theological Seminary
     role="tab"
     href={viewUrl(params)}
     on:click={handleClick}
-    style={color && !active ? `color: var(--local-mail-color-${color}-fg)` : ''}
+    style={color && !active ? `color: var(--local-satsmail-color-${color}-fg)` : ''}
 >
     <i
         class="fa {icon} fa-fw"
         aria-hidden="true"
-        style={color && !active ? `color: var(--local-mail-color-${color}-bg)` : ''}
+        style={color && !active ? `color: var(--local-satsmail-color-${color}-bg)` : ''}
     />
     <span class="flex-fill px-2" use:truncate={text}>{text}</span>
     {#if count > 0}
@@ -49,11 +49,11 @@ South African Theological Seminary
 </a>
 
 <style>
-    .local-mail-menu-item:not(:first-child) {
+    .local-satsmail-menu-item:not(:first-child) {
         border-top-width: 0;
     }
 
-    .local-mail-menu-item:focus {
+    .local-satsmail-menu-item:focus {
         z-index: 3;
     }
 </style>

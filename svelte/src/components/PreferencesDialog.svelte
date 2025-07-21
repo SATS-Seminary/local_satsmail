@@ -43,7 +43,7 @@ South African Theological Seminary
     {#each $store.settings.messageprocessors as processor}
         <div class="custom-control custom-switch my-2">
             <input
-                id="local-mail-preferences-messageprocessor-{processor.name}"
+                id="local-satsmail-preferences-messageprocessor-{processor.name}"
                 class="custom-control-input"
                 type="checkbox"
                 checked={processor.locked
@@ -53,7 +53,7 @@ South African Theological Seminary
                 on:click={() => toggleMessageProcessor(processor.name)}
             />
             <label
-                for="local-mail-preferences-messageprocessor-{processor.name}"
+                for="local-satsmail-preferences-messageprocessor-{processor.name}"
                 class="custom-control-label pl-1"
             >
                 {processor.displayname}
@@ -65,14 +65,14 @@ South African Theological Seminary
     {/each}
     <div class="custom-control custom-switch my-2 mt-3">
         <input
-            id="local-mail-preferences-markasread"
+            id="local-satsmail-preferences-markasread"
             class="custom-control-input"
             type="checkbox"
             checked={markasread && notifications.length > 0}
             disabled={notifications.length == 0}
             on:click={toggleMarkAsRead}
         />
-        <label for="local-mail-preferences-markasread" class="custom-control-label pl-1">
+        <label for="local-satsmail-preferences-markasread" class="custom-control-label pl-1">
             {$store.strings.markmessagesasread}
         </label>
     </div>

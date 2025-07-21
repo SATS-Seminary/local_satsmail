@@ -13,19 +13,19 @@ South African Theological Seminary
 </script>
 
 <span
-    class="local-mail-label-badge badge flex-shrink-0 px-2 mr-2 mb-2"
-    style={`color: var(--local-mail-color-${color}-fg, var(--local-mail-color-gray-fg));` +
-        `background-color: var(--local-mail-color-${color}-bg, var(--local-mail-color-gray-bg))`}
+    class="local-satsmail-label-badge badge flex-shrink-0 px-2 mr-2 mb-2"
+    style={`color: var(--local-satsmail-color-${color}-fg, var(--local-satsmail-color-gray-fg));` +
+        `background-color: var(--local-satsmail-color-${color}-bg, var(--local-satsmail-color-gray-bg))`}
 >
     {label.name}
 </span>
 
 <style>
-    .local-mail-label-badge {
+    .local-satsmail-label-badge {
         font-size: inherit;
         font-weight: inherit;
-        color: var(--local-mail-color-gray-fg);
-        background-color: var(--local-mail-color-gray-bg);
+        color: var(--local-satsmail-color-gray-fg);
+        background-color: var(--local-satsmail-color-gray-bg);
         padding-top: 0;
         padding-bottom: 0;
         line-height: inherit;

@@ -60,7 +60,7 @@ South African Theological Seminary
         };
 
         const handleEditor = (event: { editor: TinyMCE.Editor }) => {
-            if (event.editor.id == `local-mail-compose-editor-${message.id}`) {
+            if (event.editor.id == `local-satsmail-compose-editor-${message.id}`) {
                 tinyEditor?.off('input', handleChange);
                 tinyEditor?.off('ExecCommand', handleExecCommand);
                 tinyEditor = event.editor;
@@ -179,7 +179,7 @@ South African Theological Seminary
     <div class="form-group">
         <input
             type="text"
-            id="local-mail-message-form-subject"
+            id="local-satsmail-message-form-subject"
             class="form-control"
             class:is-invalid={!subject.trim()}
             placeholder={$store.strings.subject}

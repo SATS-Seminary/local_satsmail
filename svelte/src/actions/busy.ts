@@ -10,10 +10,10 @@ export function busy(node: HTMLElement, busy: boolean) {
 
     const update = (busy: boolean) => {
         if (busy) {
-            node.classList.add('local-mail-busy');
+            node.classList.add('local-satsmail-busy');
             node.addEventListener('keydown', listener, { capture: true });
         } else {
-            node.classList.remove('local-mail-busy');
+            node.classList.remove('local-satsmail-busy');
             node.removeEventListener('keydown', listener, { capture: true });
         }
     };

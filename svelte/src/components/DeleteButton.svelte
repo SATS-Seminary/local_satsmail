@@ -13,7 +13,7 @@ South African Theological Seminary
 
 <button
     type="button"
-    class="local-mail-delete-button btn"
+    class="local-satsmail-delete-button btn"
     class:btn-secondary={!bottom}
     class:btn-light={bottom}
     class:disabled={!$store.selectedMessages.size}

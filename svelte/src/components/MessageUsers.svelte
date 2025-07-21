@@ -17,7 +17,7 @@ South African Theological Seminary
     };
 </script>
 
-<div class="local-mail-message-users d-flex">
+<div class="local-satsmail-message-users d-flex">
     <div class="mr-3">
         <UserPicture user={message.sender} />
     </div>
@@ -41,7 +41,7 @@ South African Theological Seminary
 </div>
 
 <style>
-    .local-mail-message-users {
+    .local-satsmail-message-users {
         margin-bottom: -0.5rem;
     }
 </style>

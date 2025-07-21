@@ -13,7 +13,7 @@ South African Theological Seminary
 </script>
 
 {#if ['shortname', 'fullname'].includes($store.settings.courselink)}
-    <div class="local-mail-course-link mb-3 mb-lg-4">
+    <div class="local-satsmail-course-link mb-3 mb-lg-4">
         {#if course}
             <nav class="d-flex align-items-center">
                 <a
@@ -34,7 +34,7 @@ South African Theological Seminary
 {/if}
 
 <style>
-    .local-mail-course-link {
+    .local-satsmail-course-link {
         margin-top: -0.5rem;
     }
 </style>

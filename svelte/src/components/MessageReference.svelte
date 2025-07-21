@@ -19,7 +19,7 @@ South African Theological Seminary
         <h5 class="h5 card-title mb-3">
             {reference.subject}
         </h5>
-        <div class="local-mail-message-reference-user-and-date d-sm-flex">
+        <div class="local-satsmail-message-reference-user-and-date d-sm-flex">
             <div class="d-flex mb-3 mb-sm-0">
                 <div class="mr-3">
                     <UserPicture user={reference.sender} />
@@ -42,7 +42,7 @@ South African Theological Seminary
 </div>
 
 <style>
-    .local-mail-message-reference-user-and-date {
+    .local-satsmail-message-reference-user-and-date {
         margin-bottom: -0.25rem;
     }
 </style>

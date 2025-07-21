@@ -34,14 +34,14 @@ South African Theological Seminary
             {message.subject}
         </h3>
         <div class="d-md-flex align-items-start mb-2">
-            <div class="local-mail-message-labels d-flex flex-wrap" style="min-width: 0">
+            <div class="local-satsmail-message-labels d-flex flex-wrap" style="min-width: 0">
                 <MessageLabels {store} {message} />
             </div>
             <div class="d-flex justify-content-between flex-shrink-0 ml-auto">
                 <div class="my-2 text-truncate">
                     {message.fulltime}
                 </div>
-                <div class="local-mail-message-actions d-flex flex-shrink-0">
+                <div class="local-satsmail-message-actions d-flex flex-shrink-0">
                     <NessageActions {store} {message} {canReplyAll} />
                 </div>
             </div>
@@ -54,7 +54,7 @@ South African Theological Seminary
             <MessageAttachments strings={$store.strings} {message} />
         {/if}
         <hr />
-        <div class="local-mail-message-buttons d-flex flex-column flex-sm-row justify-content-end">
+        <div class="local-satsmail-message-buttons d-flex flex-column flex-sm-row justify-content-end">
             <MessageButtons {store} {message} {canReplyAll} />
         </div>
     </div>
@@ -70,18 +70,18 @@ South African Theological Seminary
 {/if}
 
 <style>
-    .local-mail-message-actions {
+    .local-satsmail-message-actions {
         margin-left: 1rem;
         margin-right: -0.5rem;
     }
 
-    .local-mail-message-buttons {
+    .local-satsmail-message-buttons {
         margin-top: 1rem;
         margin-right: -1rem;
         margin-bottom: -1rem;
     }
 
-    .local-mail-message-labels {
+    .local-satsmail-message-labels {
         margin-top: 0.5rem;
         margin-left: -0.5rem;
         margin-right: -0.5rem;
