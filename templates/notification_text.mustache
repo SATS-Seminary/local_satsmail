@@ -1,0 +1,39 @@
+{{!
+South African Theological Seminary
+}}
+{{!
+    @template local_satsmail/notification_html
+
+    Text notification template.
+
+    Classes required for JS:
+    * none
+
+    Data attributes required for JS:
+    * none
+
+    Context variables required for this template:
+    * coursename
+    * sendername
+    * date
+    * subject
+    * content
+    * attachments: [{path, size, url}]
+    * viewurl
+}}
+{{#str}} from, local_satsmail {{/str}}: {{{ sendername }}}
+{{#str}} subject, local_satsmail {{/str}}:  {{{ subject }}}
+{{#str}} course, local_satsmail {{/str}}: {{{ coursename }}}
+{{#str}} date, local_satsmail {{/str}}: {{{ date }}}
+
+{{{ content }}}
+{{# hasattachments }}
+
+{{# attachments }}
+{{{ path }}} ({{{ size }}}): {{{ url }}}
+{{/ attachments }}
+{{/ hasattachments }}
+
+---------
+{{#str}} viewmessage, local_satsmail {{/str}}: {{{ viewurl }}}
+
