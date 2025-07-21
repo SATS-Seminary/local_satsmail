@@ -136,7 +136,7 @@ class settings {
             foreach (get_message_processors(true) as $processor) {
                 $processorlocked = (bool) get_config('message', "{$processor->name}_provider_local_satsmail_mail_locked");
                 $processorenabled = array_search($processor->name, $enabled) !== false;
-                if ($processor->name == 'localmail' || $processorlocked && !$processorenabled) {
+                if ($processor->name == 'localsatsmail' || $processorlocked && !$processorenabled) {
                     continue;
                 }
                 $settings->messageprocessors[] = [
