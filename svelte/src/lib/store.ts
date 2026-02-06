@@ -144,6 +144,7 @@ export async function createStore(data: InitialData) {
                           : undefined,
                 starred: params.tray == 'starred' ? true : undefined,
                 deleted: params.tray == 'trash',
+                archived: params.tray == 'archive',
             };
 
             // Total count of messages.
@@ -659,6 +660,41 @@ export async function createStore(data: InitialData) {
         await callServicesAndRefresh(requests);
     };
 
+    const setArchived = async (
+        messageids: ReadonlyArray<number>,
+        archived: boolean,
+        allowUndo: boolean,
+    ) => {
+        updateMessages((message) =>
+            messageids.includes(message.id) ? { ...message, archived } : message,
+        );
+
+        const requests = messageids.map(
+            (messageid): SetArchivedRequest => ({
+                methodname: 'set_archived',
+                messageid,
+                archived,
+            }),
+        );
+
+        const responses = await callServicesAndRefresh(requests);
+
+        if (responses != null) {
+            const string = archived
+                ? messageids.length > 1
+                    ? 'messagesarchived'
+                    : 'messagearchived'
+                : messageids.length > 1
+                  ? 'messagesunarchived'
+                  : 'messageunarchived';
+            const text = replaceStringParams(state.strings[string], messageids.length);
+            const undo = () => {
+                setArchived(messageids, !archived, false);
+            };
+            showToast({ text, undo: allowUndo ? undo : undefined });
+        }
+    };
+
     const setUnread = async (messageids: ReadonlyArray<number>, unread: boolean) => {
         updateMessages((message) =>
             messageids.includes(message.id) ? { ...message, unread } : message,
@@ -813,6 +849,7 @@ export async function createStore(data: InitialData) {
         selectAll,
         selectCourse,
         sendMessage,
+        setArchived,
         setDeleted,
         setError,
         setLabels,

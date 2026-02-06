@@ -116,6 +116,7 @@ export interface MessageSummary {
     readonly unread: boolean;
     readonly starred: boolean;
     readonly deleted: boolean;
+    readonly archived: boolean;
     readonly course: Course;
     readonly sender: User;
     readonly recipients: ReadonlyArray<Recipient>;
@@ -240,7 +241,7 @@ export interface Toast {
     readonly undo?: () => void;
 }
 
-export type Tray = 'inbox' | 'sent' | 'drafts' | 'starred' | 'course' | 'label' | 'trash';
+export type Tray = 'inbox' | 'sent' | 'drafts' | 'starred' | 'archive' | 'course' | 'label' | 'trash';
 
 export interface User {
     readonly id: number;

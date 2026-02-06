@@ -6,6 +6,7 @@ South African Theological Seminary
 <script lang="ts">
     import { ViewportSize } from '../lib/state';
     import type { Store } from '../lib/store';
+    import ArchiveButton from './ArchiveButton.svelte';
     import BackButton from './BackButton.svelte';
     import CourseSelect from './CourseSelect.svelte';
     import DeleteButton from './DeleteButton.svelte';
@@ -16,6 +17,7 @@ South African Theological Seminary
     import RestoreButton from './RestoreButton.svelte';
     import SelectAllButton from './SelectAllButton.svelte';
     import SendButton from './SendButton.svelte';
+    import UnarchiveButton from './UnarchiveButton.svelte';
 
     export let store: Store;
 </script>
@@ -32,8 +34,12 @@ South African Theological Seminary
             {#if $store.params.tray == 'trash'}
                 <RestoreButton {store} />
                 <DeleteForeverButton {store} />
+            {:else if $store.params.tray == 'archive'}
+                <UnarchiveButton {store} />
+                <DeleteButton {store} />
             {:else}
                 <LabelsButton {store} />
+                <ArchiveButton {store} />
                 <DeleteButton {store} />
             {/if}
             <MoreActionsButton {store} />

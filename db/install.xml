@@ -50,6 +50,7 @@
         <FIELD NAME="unread" TYPE="int" LENGTH="1" NOTNULL="true" SEQUENCE="false"/>
         <FIELD NAME="starred" TYPE="int" LENGTH="1" NOTNULL="true" SEQUENCE="false"/>
         <FIELD NAME="deleted" TYPE="int" LENGTH="1" NOTNULL="true" SEQUENCE="false"/>
+        <FIELD NAME="archived" TYPE="int" LENGTH="1" NOTNULL="true" DEFAULT="0" SEQUENCE="false"/>
       </FIELDS>
       <KEYS>
         <KEY NAME="primary" TYPE="primary" FIELDS="id"/>
@@ -57,7 +58,7 @@
       <INDEXES>
         <INDEX NAME="messageid" UNIQUE="false" FIELDS="messageid"/>
         <INDEX NAME="courseid" UNIQUE="false" FIELDS="courseid"/>
-        <INDEX NAME="labelid" UNIQUE="false" FIELDS="labelid, courseid, draft, role, unread, starred, deleted, time, messageid"/>
+        <INDEX NAME="labelid" UNIQUE="false" FIELDS="labelid, courseid, draft, role, unread, starred, deleted, archived, time, messageid"/>
       </INDEXES>
     </TABLE>
     <TABLE NAME="local_satsmail_message_refs" COMMENT="-">
@@ -86,6 +87,7 @@
         <FIELD NAME="unread" TYPE="int" LENGTH="1" NOTNULL="true" SEQUENCE="false"/>
         <FIELD NAME="starred" TYPE="int" LENGTH="1" NOTNULL="true" SEQUENCE="false"/>
         <FIELD NAME="deleted" TYPE="int" LENGTH="1" NOTNULL="true" SEQUENCE="false"/>
+        <FIELD NAME="archived" TYPE="int" LENGTH="1" NOTNULL="true" DEFAULT="0" SEQUENCE="false"/>
       </FIELDS>
       <KEYS>
         <KEY NAME="primary" TYPE="primary" FIELDS="id"/>
@@ -93,7 +95,7 @@
       <INDEXES>
         <INDEX NAME="messageid" UNIQUE="false" FIELDS="messageid"/>
         <INDEX NAME="courseid" UNIQUE="false" FIELDS="courseid"/>
-        <INDEX NAME="userid" UNIQUE="false" FIELDS="userid, courseid, draft, role, unread, starred, deleted, time, messageid"/>
+        <INDEX NAME="userid" UNIQUE="false" FIELDS="userid, courseid, draft, role, unread, starred, deleted, archived, time, messageid"/>
       </INDEXES>
     </TABLE>
   </TABLES>

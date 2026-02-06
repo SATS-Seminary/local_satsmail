@@ -24,8 +24,8 @@ class settings {
     /** @var int Interval in seconds between automatic draft saves. */
     public int $autosaveinterval = 5;
 
-    /** @var string[] Global trays displayed in menus: "starred", "sent", "drafts" and/or "trash". */
-    public array $globaltrays = ['starred', 'sent', 'drafts', 'trash'];
+    /** @var string[] Global trays displayed in menus: "starred", "sent", "drafts", "archive" and/or "trash". */
+    public array $globaltrays = ['starred', 'sent', 'drafts', 'archive', 'trash'];
 
     /** @var string Course trays displayed in menus: "none", "unread" or "all". */
     public string $coursetrays = 'none';

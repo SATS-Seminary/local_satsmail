@@ -5,12 +5,14 @@ South African Theological Seminary
 
 <script lang="ts">
     import type { Store } from '../lib/store';
+    import ArchiveButton from './ArchiveButton.svelte';
     import DeleteButton from './DeleteButton.svelte';
     import DeleteForeverButton from './DeleteForeverButton.svelte';
     import LabelsButton from './LabelsButton.svelte';
     import MoreActionsButton from './MoreActionsButton.svelte';
     import PagingButtons from './PagingButtons.svelte';
     import RestoreButton from './RestoreButton.svelte';
+    import UnarchiveButton from './UnarchiveButton.svelte';
 
     export let store: Store;
 </script>
@@ -20,8 +22,12 @@ South African Theological Seminary
         {#if $store.params.tray == 'trash'}
             <RestoreButton {store} bottom={true} />
             <DeleteForeverButton {store} bottom={true} />
+        {:else if $store.params.tray == 'archive'}
+            <UnarchiveButton {store} bottom={true} />
+            <DeleteButton {store} bottom={true} />
         {:else}
             <LabelsButton {store} bottom={true} />
+            <ArchiveButton {store} bottom={true} />
             <DeleteButton {store} bottom={true} />
         {/if}
         <MoreActionsButton {store} bottom={true} />

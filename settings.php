@@ -80,6 +80,7 @@ if ($hassiteconfig) {
         'starred' => strings::get('starredplural'),
         'sent' => strings::get('sentplural'),
         'drafts' => strings::get('drafts'),
+        'archive' => strings::get('archived'),
         'trash' => strings::get('trash'),
     ];
     $settings->add(new admin_setting_configmulticheckbox($name, $visiblename, $description, $defaultsetting, $choices));

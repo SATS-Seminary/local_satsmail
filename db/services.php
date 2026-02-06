@@ -110,6 +110,14 @@ $functions = [
         'type' => 'write',
         'ajax' => true,
     ],
+    'local_satsmail_set_archived' => [
+        'classname' => 'local_satsmail\\external',
+        'methodname' => 'set_archived',
+        'classpath' => 'local/satsmail/externallib.php',
+        'description' => 'Sets the archived status of a message.',
+        'type' => 'write',
+        'ajax' => true,
+    ],
     'local_satsmail_create_label' => [
         'classname' => 'local_satsmail\\external',
         'methodname' => 'create_label',

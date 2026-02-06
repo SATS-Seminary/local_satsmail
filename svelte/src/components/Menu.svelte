@@ -107,6 +107,15 @@ South African Theological Seminary
             {onClick}
         />
     {/if}
+    {#if trayVisible('archive')}
+        <MenuItem
+            icon="fa-archive"
+            text={strings.archived}
+            params={{ tray: 'archive', courseid, search }}
+            active={params.tray == 'archive'}
+            {onClick}
+        />
+    {/if}
     {#if trayVisible('trash')}
         <MenuItem
             icon="fa-trash"

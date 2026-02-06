@@ -56,6 +56,9 @@ class message {
     /** @var int[] Deleted status, indexed by user ID. */
     private array $deleted = [];
 
+    /** @var bool[] Archived status, indexed by user ID. */
+    private array $archived = [];
+
     /** @var user[] Users, indexed by user ID. */
     private array $users = [];
 
@@ -113,6 +116,7 @@ class message {
         $message->unread[$data->sender->id] = false;
         $message->starred[$data->sender->id] = false;
         $message->deleted[$data->sender->id] = self::NOT_DELETED;
+        $message->archived[$data->sender->id] = false;
         $message->users[$data->sender->id] = $data->sender;
         $message->labelids[$data->sender->id] = [];
         $userrecord = new \stdClass();
@@ -125,6 +129,7 @@ class message {
         $userrecord->unread = 0;
         $userrecord->starred = 0;
         $userrecord->deleted = self::NOT_DELETED;
+        $userrecord->archived = 0;
         $DB->insert_record('local_satsmail_message_users', $userrecord);
 
         // References.
@@ -219,7 +224,7 @@ class message {
         }
 
         // Get message users.
-        $fields = 'id, messageid, userid, role, unread, starred, deleted';
+        $fields = 'id, messageid, userid, role, unread, starred, deleted, archived';
         $messageuserrecords = $DB->get_records_select('local_satsmail_message_users', "messageid $sqlid", $params, '', $fields);
         $users = user::get_many(array_unique(array_column($messageuserrecords, 'userid')));
         foreach ($messageuserrecords as $r) {
@@ -227,6 +232,7 @@ class message {
             $messages[$r->messageid]->unread[$r->userid] = (bool) $r->unread;
             $messages[$r->messageid]->starred[$r->userid] = (bool) $r->starred;
             $messages[$r->messageid]->deleted[$r->userid] = (int) $r->deleted;
+            $messages[$r->messageid]->archived[$r->userid] = (bool) $r->archived;
             $messages[$r->messageid]->users[$r->userid] = $users[$r->userid];
             $messages[$r->messageid]->labelids[$r->userid] = [];
             if ($r->role == self::ROLE_FROM && $r->deleted == self::DELETED_CONTENT) {
@@ -296,6 +302,18 @@ class message {
         assert(isset($this->roles[$user->id]));
 
         return $this->deleted[$user->id];
+    }
+
+    /**
+     * Returns the archived status of the message.
+     *
+     * @param user $user User.
+     * @return bool
+     */
+    public function archived(user $user): bool {
+        assert(isset($this->roles[$user->id]));
+
+        return $this->archived[$user->id];
     }
 
     /**
@@ -501,7 +519,7 @@ class message {
             // Update message user record.
             if ($resetmetadata) {
                 $sql = 'UPDATE {local_satsmail_message_users}'
-                    . ' SET deleted = :deleted, unread = :unread, starred = :starred'
+                    . ' SET deleted = :deleted, unread = :unread, starred = :starred, archived = :archived'
                     . ' WHERE messageid = :messageid AND userid = :userid';
                 $params = [
                     'messageid' => $this->id,
@@ -509,6 +527,7 @@ class message {
                     'deleted' => $status,
                     'unread' => 0,
                     'starred' => 0,
+                    'archived' => 0,
                 ];
                 $DB->execute($sql, $params);
             } else {
@@ -549,6 +568,7 @@ class message {
         if ($resetmetadata) {
             $this->unread[$user->id] = false;
             $this->starred[$user->id] = false;
+            $this->archived[$user->id] = false;
             $this->labelids[$user->id] = [];
         }
     }
@@ -590,6 +610,7 @@ class message {
                 $record->unread = $this->unread[$label->userid];
                 $record->starred = $this->starred[$label->userid];
                 $record->deleted = $this->deleted[$label->userid];
+                $record->archived = $this->archived[$label->userid];
                 $DB->insert_record('local_satsmail_message_labels', $record);
             }
         }
@@ -664,6 +685,38 @@ class message {
         $transaction->allow_commit();
 
         $this->unread[$user->id] = $status;
+    }
+
+    /**
+     * Sets the archived status of the message.
+     *
+     * @param user $user User.
+     * @param bool $status New archived status.
+     */
+    public function set_archived(user $user, bool $status): void {
+        global $DB;
+
+        assert(isset($this->roles[$user->id]));
+        assert(!$this->draft || $this->roles[$user->id] == self::ROLE_FROM);
+        assert(in_array($this->deleted[$user->id], [self::NOT_DELETED, self::DELETED]));
+
+        if ($status == $this->archived[$user->id]) {
+            return;
+        }
+
+        $transaction = $DB->start_delegated_transaction();
+
+        $conditions = ['messageid' => $this->id, 'userid' => $user->id];
+        $DB->set_field('local_satsmail_message_users', 'archived', $status, $conditions);
+
+        foreach ($this->labelids[$user->id] as $labelid) {
+            $conditions = ['messageid' => $this->id, 'labelid' => $labelid];
+            $DB->set_field('local_satsmail_message_labels', 'archived', $status, $conditions);
+        }
+
+        $transaction->allow_commit();
+
+        $this->archived[$user->id] = $status;
     }
 
     /**
@@ -750,26 +803,29 @@ class message {
         // User records.
         foreach (array_keys($this->roles) as $userid) {
             $this->deleted[$userid] = self::NOT_DELETED;
+            $this->archived[$userid] = false;
         }
         $sql = 'UPDATE {local_satsmail_message_users}'
-            . ' SET courseid = :courseid, deleted = :deleted, time = :time'
+            . ' SET courseid = :courseid, deleted = :deleted, archived = :archived, time = :time'
             . ' WHERE messageid = :messageid';
         $params = [
             'messageid' => $this->id,
             'courseid' => $this->course->id,
             'deleted' => self::NOT_DELETED,
+            'archived' => 0,
             'time' => $this->time,
         ];
         $DB->execute($sql, $params);
 
         // Label records.
         $sql = 'UPDATE {local_satsmail_message_labels}'
-            . ' SET courseid = :courseid, deleted = :deleted, time = :time'
+            . ' SET courseid = :courseid, deleted = :deleted, archived = :archived, time = :time'
             . ' WHERE messageid = :messageid';
         $params = [
             'messageid' => $this->id,
             'courseid' => $this->course->id,
             'deleted' => self::NOT_DELETED,
+            'archived' => 0,
             'time' => $this->time,
         ];
         $DB->execute($sql, $params);
@@ -793,6 +849,7 @@ class message {
                     $this->unread[$user->id] = true;
                     $this->starred[$user->id] = false;
                     $this->deleted[$user->id] = self::NOT_DELETED;
+                    $this->archived[$user->id] = false;
                     $this->labelids[$user->id] = [];
 
                     $userrecord = new \stdClass();
@@ -805,6 +862,7 @@ class message {
                     $userrecord->unread = 1;
                     $userrecord->starred = 0;
                     $userrecord->deleted = self::NOT_DELETED;
+                    $userrecord->archived = 0;
                     $DB->insert_record('local_satsmail_message_users', $userrecord);
                 } else if ($role != $this->roles[$user->id]) {
                     $this->roles[$user->id] = $role;

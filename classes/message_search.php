@@ -30,6 +30,9 @@ class message_search {
     /** @var bool If true, search deleted messages. */
     public bool $deleted = false;
 
+    /** @var bool If true, search archived messages. */
+    public bool $archived = false;
+
     /** @var string If not empty, search messages with this text in the subject, content, sender or receivers. */
     public string $content = '';
 
@@ -91,6 +94,9 @@ class message_search {
         }
         if ($this->deleted) {
             $params['deleted'] = true;
+        }
+        if ($this->archived) {
+            $params['archived'] = true;
         }
         if ($this->content != '') {
             $params['content'] = $this->content;
@@ -228,6 +234,7 @@ class message_search {
             'unread' => $this->unread ?? [0, 1],
             'starred' => $this->starred ?? [0, 1],
             'deleted' => $this->deleted ? message::DELETED : message::NOT_DELETED,
+            'archived' => $this->archived ? 1 : 0,
         ];
 
         if ($this->label || $countperlabel) {

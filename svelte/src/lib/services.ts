@@ -28,6 +28,7 @@ export type ServiceRequest =
     | SetUnreadRequest
     | SetStarredRequest
     | SetDeletedRequest
+    | SetArchivedRequest
     | EmptyTrashRequest
     | CreateLabelRequest
     | UpdateLabelRequest
@@ -70,6 +71,7 @@ export interface MessageQuery {
     readonly unread?: boolean;
     readonly starred?: boolean;
     readonly deleted?: boolean;
+    readonly archived?: boolean;
     readonly content?: string;
     readonly sendername?: string;
     readonly recipientname?: string;
@@ -133,6 +135,14 @@ export interface SetDeletedRequest {
 }
 
 export type SetDeletedResponse = void;
+
+export interface SetArchivedRequest {
+    readonly methodname: 'set_archived';
+    readonly messageid: number;
+    readonly archived: boolean;
+}
+
+export type SetArchivedResponse = void;
 
 export interface EmptyTrashRequest {
     readonly methodname: 'empty_trash';

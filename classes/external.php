@@ -361,6 +361,12 @@ class external extends \external_api {
                 VALUE_DEFAULT,
                 false
             ),
+            'archived' => new \external_value(
+                PARAM_BOOL,
+                'Search archived messages.',
+                VALUE_DEFAULT,
+                false
+            ),
             'content' => new \external_value(
                 PARAM_RAW,
                 'Search messages with this text in ',
@@ -452,6 +458,7 @@ class external extends \external_api {
         }
 
         $search->deleted = $query['deleted'];
+        $search->archived = $query['archived'];
         $search->content = $query['content'];
         $search->sendername = $query['sendername'];
         $search->recipientname = $query['recipientname'];
@@ -663,6 +670,7 @@ class external extends \external_api {
         global $OUTPUT, $PAGE;
         $renderer = $PAGE->get_renderer('local_satsmail');
 
+        $PAGE->set_url('/local/satsmail/view.php');
         $PAGE->initialise_theme_and_output();
         $OUTPUT->header(); // Hack alert: Forcing bootstrap_renderer to initiate moodle page.
         $PAGE->start_collecting_javascript_requirements();
@@ -1007,6 +1015,32 @@ class external extends \external_api {
     }
 
     public static function set_deleted_returns() {
+        return null;
+    }
+
+    public static function set_archived_parameters() {
+        return new \external_function_parameters([
+            'messageid' => new \external_value(PARAM_INT, 'ID of the message'),
+            'archived' => new \external_value(PARAM_BOOL, 'New archived status'),
+        ]);
+    }
+
+    public static function set_archived() {
+        $params = self::validate_call(self::set_archived_parameters(), func_get_args());
+
+        $user = user::current();
+        $message = message::get($params['messageid']);
+
+        if (!$user->can_view_message($message)) {
+            throw new exception('errormessagenotfound', $message->id);
+        }
+
+        $message->set_archived($user, $params['archived']);
+
+        return null;
+    }
+
+    public static function set_archived_returns() {
         return null;
     }
 
