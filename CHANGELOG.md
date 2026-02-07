@@ -1,5 +1,18 @@
 # Changelog
 
+## [2.0] - 2026-02-07
+
+### Added
+
+- Reply-by-email support via Moodle's Inbound Message API. Users can reply directly to notification emails from their email client, and the reply is delivered as a new SATS Mail message.
+- Archive option for the mailbox.
+- Email-safe base64 encoding for inbound mail reply-to addresses, avoiding characters (`+`, `/`, `=`) that cause issues with email proxies such as Amazon SES (aligned with MDL-71652).
+
+### Fixed
+
+- Capability language strings not resolving in the role definitions.
+- Archive label showing as "undefined" in the navigation bar dropdown menu.
+
 ## [2.15] - 2025-05-08
 
 ### Added

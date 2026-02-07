@@ -113,6 +113,7 @@ function local_satsmail_render_navbar_output(\renderer_base $renderer) {
             'settings' => (array) settings::get(),
             'strings' => strings::get_many([
                 'allcourses',
+                'archived',
                 'bcc',
                 'cc',
                 'changecourse',

@@ -142,14 +142,35 @@ class renderer extends \plugin_renderer_base {
             ];
         }
 
-        $notification = new \core\message\message();
-        $notification->courseid = $message->course->id;
-        $notification->component = 'local_satsmail';
-        $notification->name = 'mail';
-        $notification->userfrom = $sender->id;
-        $notification->userto = $recipient->id;
-        $notification->subject = strings::get('notificationsubject', $sitename);
-        $notification->fullmessage = $this->render_from_template('local_satsmail/notification_text', [
+        // Check if reply-by-email is available.
+        $canreply = false;
+        if (\core\message\inbound\manager::is_enabled()) {
+            try {
+                $addressmanager = new \core\message\inbound\address_manager();
+                $addressmanager->set_handler('\local_satsmail\message\inbound\reply_handler');
+                $addressmanager->set_data($message->id);
+                $replyto = $addressmanager->generate($recipient->id);
+                if ($replyto) {
+                    // Convert the base64 subaddress to URL-safe base64 (RFC 4648 section 5)
+                    // to avoid '/' and '+' characters that cause issues with SES proxies.
+                    $replyto = self::make_address_url_safe($replyto);
+                    $canreply = true;
+                    debugging(
+                        "local_satsmail: Set reply-to for message {$message->id} "
+                        . "to user {$recipient->id}: {$replyto}",
+                        DEBUG_DEVELOPER
+                    );
+                }
+            } catch (\Exception $e) {
+                debugging(
+                    "local_satsmail: Failed to generate reply-to address for message {$message->id} "
+                    . "to user {$recipient->id}: " . $e->getMessage(),
+                    DEBUG_DEVELOPER
+                );
+            }
+        }
+
+        $templatecontext = [
             'coursename' => $coursename,
             'sendername' => $sender->fullname(),
             'date' => $this->formatted_time($message->time, true),
@@ -158,20 +179,25 @@ class renderer extends \plugin_renderer_base {
             'hasattachments' => count($attachments) > 0,
             'attachments' => $attachments,
             'viewurl' => $url->out(false),
-        ]);
+            'canreply' => $canreply,
+        ];
+
+        $notification = new \core\message\message();
+        $notification->courseid = $message->course->id;
+        $notification->component = 'local_satsmail';
+        $notification->name = 'mail';
+        $notification->userfrom = $sender->id;
+        $notification->userto = $recipient->id;
+        $notification->subject = strings::get('notificationsubject', $sitename);
+        $notification->fullmessage = $this->render_from_template('local_satsmail/notification_text', $templatecontext);
         $notification->fullmessageformat = FORMAT_PLAIN;
-        $notification->fullmessagehtml = $this->render_from_template('local_satsmail/notification_html', [
-            'coursename' => $coursename,
-            'courseurl' => $course->url(),
-            'sendername' => $sender->fullname(),
-            'senderurl' => $sender->profile_url($course),
-            'date' => $this->formatted_time($message->time, true),
-            'subject' => $message->subject,
-            'content' => $content,
-            'hasattachments' => count($attachments) > 0,
-            'attachments' => $attachments,
-            'viewurl' => $url->out(false),
-        ]);
+        $notification->fullmessagehtml = $this->render_from_template('local_satsmail/notification_html',
+            array_merge($templatecontext, [
+                'courseurl' => $course->url(),
+                'senderurl' => $sender->profile_url($course),
+                'content' => $content,
+            ])
+        );
         $notification->smallmessage = strings::get('notificationsmallmessage', [
             'user' => $sender->fullname(),
             'course' => $course->fullname,
@@ -180,7 +206,51 @@ class renderer extends \plugin_renderer_base {
         $notification->contexturl = $url->out(false);
         $notification->contexturlname = $message->subject;
 
+        // Set reply-to address for incoming mail handler.
+        if ($canreply && !empty($replyto)) {
+            $notification->replyto = $replyto;
+            $notification->replytoname = $sender->fullname();
+        }
+
         return $notification;
+    }
+
+    /**
+     * Converts the base64-encoded subaddress in an inbound mail address to use
+     * only common email-safe characters.
+     *
+     * Standard base64 uses '+', '/' and '=' which can cause issues with email
+     * proxies like Amazon SES. This replaces them with '-' and '.' in the
+     * subaddress portion (between '+' and '@'), and strips '=' padding.
+     *
+     * See MDL-71652 for the corresponding Moodle core change needed in
+     * address_manager::process() to convert back before decoding.
+     *
+     * @param string $address The full email address with standard base64 subaddress.
+     * @return string The address with email-safe subaddress.
+     */
+    private static function make_address_url_safe(string $address): string {
+        // Split into local part and domain.
+        $atpos = strrpos($address, '@');
+        if ($atpos === false) {
+            return $address;
+        }
+        $localpart = substr($address, 0, $atpos);
+        $domain = substr($address, $atpos);
+
+        // Split local part into mailbox and subaddress at the first '+'.
+        $pluspos = strpos($localpart, '+');
+        if ($pluspos === false) {
+            return $address;
+        }
+        $mailbox = substr($localpart, 0, $pluspos);
+        $subaddress = substr($localpart, $pluspos + 1);
+
+        // Replace '+' -> '-', '/' -> '.' and strip '=' padding.
+        // Per MDL-71652: '-' and '.' are common in email addresses and safe for all MTAs.
+        $subaddress = str_replace('=', '', strtr($subaddress, '+/', '-.'));
+
+        return $mailbox . '+' . $subaddress . $domain;
     }
 
     /**
