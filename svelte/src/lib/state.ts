@@ -190,6 +190,7 @@ export interface Settings {
     readonly incrementalsearch: boolean;
     readonly incrementalsearchlimit: number;
     readonly courselink: 'hidden' | 'shortname' | 'fullname';
+    readonly cccohortid: number;
     readonly messageprocessors: ReadonlyArray<MessageProcessor>;
 }
 

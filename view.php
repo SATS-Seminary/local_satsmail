@@ -47,7 +47,7 @@ $PAGE->requires->string_for_js('localecldr', 'langconfig');
 
 $user = user::current();
 
-if ($user && course::get_by_user($user)) {
+if ($user && course::get_all_for_user($user)) {
     // Initial data passed via a script tag.
     $data = [
         'userid' => $user->id,

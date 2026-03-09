@@ -176,15 +176,17 @@ class user {
     }
 
     /**
-     * Returns whether the user can a message.
+     * Returns whether the user can view a message.
+     *
+     * Viewing is based on participation (sender or recipient), not enrollment.
+     * This allows users to read their mail history even after enrollment expires.
      *
      * @param message $message Message.
      * @return bool
      */
     public function can_view_message(message $message): bool {
         return ($message->sender()->id == $this->id || !$message->draft && $message->has_recipient($this)) &&
-            in_array($message->deleted($this), [message::NOT_DELETED, message::DELETED]) &&
-            $this->can_use_mail($message->course);
+            in_array($message->deleted($this), [message::NOT_DELETED, message::DELETED]);
     }
 
     /**
@@ -242,6 +244,82 @@ class user {
      */
     public function sortorder(): string {
         return sprintf("%d\n%s\n%s\n%010d", $this->deleted, $this->lastname, $this->firstname, $this->id);
+    }
+
+    /**
+     * Returns whether the given user is a member of the configured CC cohort.
+     *
+     * @param int $userid User ID to check.
+     * @return bool
+     */
+    public static function is_cc_cohort_member(int $userid): bool {
+        global $DB;
+
+        $cohortid = (int) get_config('local_satsmail', 'cccohortid');
+        if (!$cohortid) {
+            return false;
+        }
+
+        return $DB->record_exists('cohort_members', ['cohortid' => $cohortid, 'userid' => $userid]);
+    }
+
+    /**
+     * Searches members of the configured CC cohort, optionally filtered by name.
+     * Excludes the given user (the searcher) from results.
+     *
+     * @param int $excludeuserid User ID to exclude from results.
+     * @param string $fullname Optional name filter.
+     * @param int[] $include Optional list of user IDs to restrict results to.
+     * @param int $offset Skip this number of users.
+     * @param int $limit Maximum number of users, 0 means no limit.
+     * @return self[] Found users, indexed by ID.
+     */
+    public static function search_cc_cohort(int $excludeuserid, string $fullname = '', array $include = [], int $offset = 0, int $limit = 0): array {
+        global $CFG, $DB;
+
+        $cohortid = (int) get_config('local_satsmail', 'cccohortid');
+        if (!$cohortid) {
+            return [];
+        }
+
+        $fields = implode(',', array_map(fn($f) => "u.$f", \core_user\fields::get_picture_fields()));
+        $sql = "SELECT $fields
+                  FROM {user} u
+                  JOIN {cohort_members} cm ON cm.userid = u.id
+                 WHERE cm.cohortid = :cohortid
+                   AND u.deleted = 0
+                   AND u.id <> :excludeuserid
+                   AND u.id <> :guestid";
+        $params = [
+            'cohortid' => $cohortid,
+            'excludeuserid' => $excludeuserid,
+            'guestid' => $CFG->siteguest,
+        ];
+
+        if ($fullname !== '') {
+            $fullnamefield = $DB->sql_fullname('u.firstname', 'u.lastname');
+            $sql .= ' AND ' . $DB->sql_like($fullnamefield, ':fullname', false, false);
+            $params['fullname'] = '%' . $DB->sql_like_escape($fullname) . '%';
+        }
+
+        if ($include) {
+            [$includesql, $includeparams] = $DB->get_in_or_equal($include, SQL_PARAMS_NAMED, 'id');
+            $sql .= ' AND u.id ' . $includesql;
+            $params = array_merge($params, $includeparams);
+        }
+
+        [$sort, $sortparams] = users_order_by_sql('u');
+        $sql .= ' ORDER BY ' . $sort;
+        $params = array_merge($params, $sortparams);
+
+        $records = $DB->get_records_sql($sql, $params, $offset, $limit);
+
+        $users = [];
+        foreach ($records as $record) {
+            $users[$record->id] = new self($record);
+        }
+
+        return $users;
     }
 }
 

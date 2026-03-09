@@ -85,6 +85,45 @@ class course {
     }
 
     /**
+     * Gets courses where the user has sent or received messages, regardless of enrollment.
+     *
+     * @param user $user User.
+     * @return self[] Array of courses indexed by ID.
+     */
+    public static function get_by_participation(user $user): array {
+        global $DB;
+
+        $sql = 'SELECT DISTINCT mu.courseid
+                  FROM {local_satsmail_message_users} mu
+                 WHERE mu.userid = :userid
+                   AND mu.deleted < :deletedforever';
+        $params = [
+            'userid' => $user->id,
+            'deletedforever' => 2, // message::DELETED_FOREVER
+        ];
+        $records = $DB->get_records_sql($sql, $params);
+
+        if (!$records) {
+            return [];
+        }
+
+        return self::get_many(array_keys($records));
+    }
+
+    /**
+     * Gets all courses relevant to the user: enrolled courses plus courses with message history.
+     *
+     * @param user $user User.
+     * @return self[] Array of courses indexed by ID.
+     */
+    public static function get_all_for_user(user $user): array {
+        $enrolled = self::get_by_user($user);
+        $participated = self::get_by_participation($user);
+
+        return $enrolled + $participated;
+    }
+
+    /**
      * Gets multiple courses from the database.
      *
      * @param int[] $ids IDs of the courses to get.

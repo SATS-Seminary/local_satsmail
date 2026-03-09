@@ -8,6 +8,8 @@ use local_satsmail\output\strings;
 
 defined('MOODLE_INTERNAL') || die();
 
+require_once("$CFG->dirroot/cohort/lib.php");
+
 if ($hassiteconfig) {
     $defaults = settings::defaults();
 
@@ -175,6 +177,20 @@ if ($hassiteconfig) {
         'fullname' => get_string('fullname'),
     ];
     $settings->add(new admin_setting_configselect($name, $visiblename, $description, $defaultsetting, $choices));
+
+    // CC Cohort.
+    $settings->add(new admin_setting_heading('local_satsmail_cccohort', strings::get('configcccohort'), ''));
+
+    $name = 'local_satsmail/cccohortid';
+    $visiblename = strings::get('configcccohort');
+    $description = strings::get('configcccohortdesc');
+    $defaultsetting = $defaults->cccohortid;
+    $cohorts = [0 => get_string('none')];
+    $allcohorts = \cohort_get_all_cohorts(0, 0, '')['cohorts'] ?? [];
+    foreach ($allcohorts as $cohort) {
+        $cohorts[$cohort->id] = $cohort->name;
+    }
+    $settings->add(new admin_setting_configselect($name, $visiblename, $description, $defaultsetting, $cohorts));
 
     $ADMIN->add('localplugins', $settings);
 }

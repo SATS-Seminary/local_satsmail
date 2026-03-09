@@ -51,6 +51,9 @@ class settings {
     /** @var string Type of course name displayed in the course link: "hidden", "shortname" or "fullname". */
     public string $courselink = 'hidden';
 
+    /** @var int ID of the cohort whose members can be CC'd on messages. 0 means disabled. */
+    public int $cccohortid = 0;
+
     /** @var array Array of message providers (name, displayname, locked, enabled). */
     public array $messageprocessors = [];
 
@@ -130,6 +133,9 @@ class settings {
         }
         if (isset($config->courselink)) {
             $settings->courselink = $config->courselink;
+        }
+        if (isset($config->cccohortid)) {
+            $settings->cccohortid = (int) $config->cccohortid;
         }
         if (!get_config('message', 'local_satsmail_mail_disable')) {
             $enabled = explode(',', get_config('message', 'message_provider_local_satsmail_mail_enabled'));

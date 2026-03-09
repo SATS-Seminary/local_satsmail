@@ -82,6 +82,10 @@ class external extends \external_api {
                 PARAM_ALPHA,
                 'Type of course name displayed in the course link: "hidden", "shortname" or "fullname"'
             ),
+            'cccohortid' => new \external_value(
+                PARAM_INT,
+                'ID of the cohort whose members can be CC\'d on messages. 0 means disabled.'
+            ),
             'messageprocessors' => new \external_multiple_structure(
                 new \external_single_structure([
                     'name' => new \external_value(PARAM_PLUGIN, 'Name of the message processor'),
@@ -219,7 +223,7 @@ class external extends \external_api {
 
     public static function get_courses_raw() {
         $user = user::current();
-        $courses = course::get_by_user($user);
+        $courses = course::get_all_for_user($user);
 
         if (!$courses) {
             return [];
@@ -425,7 +429,7 @@ class external extends \external_api {
 
         if ($query['courseid']) {
             $search->course = course::get($query['courseid']);
-            if (!$user->can_use_mail($search->course)) {
+            if (!array_key_exists($search->course->id, course::get_all_for_user($user))) {
                 throw new exception('errorcoursenotfound', $search->course->id);
             }
         }
@@ -732,6 +736,24 @@ class external extends \external_api {
         $search = new user_search($user, $course);
         $search->include = array_column($recipients, 'id');
         $validrecipients = $search->get();
+
+        // For replies/forwards, participants of referenced messages are also valid recipients.
+        if ($message->draft) {
+            foreach ($message->get_references() as $ref) {
+                $validrecipients[$ref->sender()->id] = $ref->sender();
+                foreach ($ref->recipients() as $refrecipient) {
+                    $validrecipients[$refrecipient->id] = $refrecipient;
+                }
+            }
+        }
+
+        // Members of the configured CC cohort are also valid recipients.
+        if ($message->draft) {
+            $cohortrecipients = user::search_cc_cohort($user->id, '', array_column($recipients, 'id'));
+            foreach ($cohortrecipients as $cohortrecipient) {
+                $validrecipients[$cohortrecipient->id] = $cohortrecipient;
+            }
+        }
 
         foreach ($recipients as $recipient) {
             $role = $message->role($recipient);
@@ -1058,7 +1080,7 @@ class external extends \external_api {
         $course = null;
         if ($params['courseid']) {
             $course = course::get($params['courseid']);
-            if (!$user->can_use_mail($course)) {
+            if (!array_key_exists($course->id, course::get_all_for_user($user))) {
                 throw new exception('errorcoursenotfound', $course->id);
             }
         }
@@ -1392,6 +1414,20 @@ class external extends \external_api {
 
         $users = $search->get($params['offset'], $params['limit']);
 
+        // Also include members of the configured CC cohort (if any), ignoring role/group filters.
+        $cohortusers = user::search_cc_cohort(
+            $user->id,
+            $params['query']['fullname'] ?? '',
+            $params['query']['include'] ?? [],
+            $params['offset'],
+            $params['limit'],
+        );
+        foreach ($cohortusers as $cohortuser) {
+            if (!isset($users[$cohortuser->id])) {
+                $users[$cohortuser->id] = $cohortuser;
+            }
+        }
+
         return self::search_users_response($course, $users);
     }
 
@@ -1535,6 +1571,9 @@ class external extends \external_api {
         if (!$user->can_view_message($message)) {
             throw new exception('errormessagenotfound', $message->id);
         }
+        if (!$user->can_use_mail($message->course)) {
+            throw new exception('errorcoursenotfound', $message->course->id);
+        }
 
         $data = message_data::reply($message, $user, $params['all']);
         $message = message::create($data);
@@ -1558,6 +1597,9 @@ class external extends \external_api {
         $message = message::get($params['messageid']);
         if (!$user->can_view_message($message)) {
             throw new exception('errormessagenotfound', $message->id);
+        }
+        if (!$user->can_use_mail($message->course)) {
+            throw new exception('errorcoursenotfound', $message->course->id);
         }
 
         $data = message_data::forward($message, $user);
@@ -1648,6 +1690,20 @@ class external extends \external_api {
         $search = new user_search($user, $message->course);
         $search->include = array_column($recipients, 'id');
         $validrecipients = $search->get();
+
+        // For replies/forwards, participants of referenced messages are also valid recipients.
+        foreach ($message->get_references() as $ref) {
+            $validrecipients[$ref->sender()->id] = $ref->sender();
+            foreach ($ref->recipients() as $refrecipient) {
+                $validrecipients[$refrecipient->id] = $refrecipient;
+            }
+        }
+
+        // Members of the configured CC cohort are also valid recipients.
+        $cohortrecipients = user::search_cc_cohort($user->id, '', array_column($recipients, 'id'));
+        foreach ($cohortrecipients as $cohortrecipient) {
+            $validrecipients[$cohortrecipient->id] = $cohortrecipient;
+        }
 
         foreach ($recipients as $recipient) {
             if (!isset($validrecipients[$recipient->id])) {

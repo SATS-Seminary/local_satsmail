@@ -70,7 +70,7 @@ function local_satsmail_render_navbar_output(\renderer_base $renderer) {
 
     $user = user::current();
 
-    if (!settings::is_installed() || WS_SERVER || AJAX_SCRIPT || !$user || !course::get_by_user($user)) {
+    if (!settings::is_installed() || WS_SERVER || AJAX_SCRIPT || !$user) {
         return '';
     }
 

@@ -386,10 +386,6 @@ function xmldb_local_satsmail_upgrade($oldversion) {
             $dbman->add_field($table, $field);
         }
 
-        // Remove default value from field archived.
-        $field = new xmldb_field('archived', XMLDB_TYPE_INTEGER, '1', null, XMLDB_NOTNULL, null, null, 'deleted');
-        $dbman->change_field_default($table, $field);
-
         upgrade_plugin_savepoint(true, 2026020500, 'local', 'satsmail');
     }
 
@@ -403,10 +399,6 @@ function xmldb_local_satsmail_upgrade($oldversion) {
         if (!$dbman->field_exists($table, $field)) {
             $dbman->add_field($table, $field);
         }
-
-        // Remove default value from field archived.
-        $field = new xmldb_field('archived', XMLDB_TYPE_INTEGER, '1', null, XMLDB_NOTNULL, null, null, 'deleted');
-        $dbman->change_field_default($table, $field);
 
         upgrade_plugin_savepoint(true, 2026020501, 'local', 'satsmail');
     }
@@ -453,6 +445,44 @@ function xmldb_local_satsmail_upgrade($oldversion) {
         }
 
         upgrade_plugin_savepoint(true, 2026020502, 'local', 'satsmail');
+    }
+
+    // Fix default value of archived field (was incorrectly removed in earlier upgrade).
+
+    if ($oldversion < 2026020900) {
+        // Fix local_satsmail_message_users.
+        $table = new xmldb_table('local_satsmail_message_users');
+        $index = new xmldb_index(
+            'userid',
+            XMLDB_INDEX_NOTUNIQUE,
+            ['userid', 'courseid', 'draft', 'role', 'unread', 'starred', 'deleted', 'archived', 'time', 'messageid']
+        );
+        if ($dbman->index_exists($table, $index)) {
+            $dbman->drop_index($table, $index);
+        }
+        $field = new xmldb_field('archived', XMLDB_TYPE_INTEGER, '1', null, XMLDB_NOTNULL, null, '0', 'deleted');
+        $dbman->change_field_default($table, $field);
+        if (!$dbman->index_exists($table, $index)) {
+            $dbman->add_index($table, $index);
+        }
+
+        // Fix local_satsmail_message_labels.
+        $table = new xmldb_table('local_satsmail_message_labels');
+        $index = new xmldb_index(
+            'labelid',
+            XMLDB_INDEX_NOTUNIQUE,
+            ['labelid', 'courseid', 'draft', 'role', 'unread', 'starred', 'deleted', 'archived', 'time', 'messageid']
+        );
+        if ($dbman->index_exists($table, $index)) {
+            $dbman->drop_index($table, $index);
+        }
+        $field = new xmldb_field('archived', XMLDB_TYPE_INTEGER, '1', null, XMLDB_NOTNULL, null, '0', 'deleted');
+        $dbman->change_field_default($table, $field);
+        if (!$dbman->index_exists($table, $index)) {
+            $dbman->add_index($table, $index);
+        }
+
+        upgrade_plugin_savepoint(true, 2026020900, 'local', 'satsmail');
     }
 
     return true;
