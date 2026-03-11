@@ -141,6 +141,22 @@ class user {
     }
 
     /**
+     * Returns whether a CC cohort member can edit a reply draft.
+     *
+     * This allows CC cohort members (not enrolled in the course) to edit
+     * and send reply drafts for messages they received as CC recipients.
+     *
+     * @param message $message Message (the draft).
+     * @return bool
+     */
+    public function can_edit_reply_as_cc_member(message $message): bool {
+        return $message->draft &&
+            $this->id == $message->sender()->id &&
+            in_array($message->deleted($this), [message::NOT_DELETED, message::DELETED]) &&
+            self::is_cc_cohort_member($this->id);
+    }
+
+    /**
      * Returns whether the user can view the attachments of a message.
      *
      * @param message $message Message.
@@ -166,7 +182,7 @@ class user {
      * @return bool
      */
     public function can_view_group(course $course, int $groupid): bool {
-        if (!$this->can_use_mail($course)) {
+        if (!$this->can_use_mail($course) && !self::is_cc_cohort_member($this->id)) {
             return false;
         } else if ($course->groupmode == NOGROUPS) {
             return $groupid == 0;

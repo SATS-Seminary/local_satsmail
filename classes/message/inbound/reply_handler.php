@@ -146,8 +146,8 @@ class reply_handler extends \core\message\inbound\handler {
             );
         }
 
-        // Validate enrollment and capability.
-        if (!$replyinguser->can_use_mail($originalmessage->course)) {
+        // Validate enrollment and capability (CC cohort members may reply without enrollment).
+        if (!$replyinguser->can_use_mail($originalmessage->course) && !user::is_cc_cohort_member($replyinguser->id)) {
             debugging(
                 "local_satsmail inbound: User {$replyinguser->id} cannot use mail "
                 . "in course {$originalmessage->course->id}, aborting",

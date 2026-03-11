@@ -1281,7 +1281,7 @@ class external extends \external_api {
         $user = user::current();
         $course = course::get($params['courseid']);
 
-        if (!$user->can_use_mail($course)) {
+        if (!$user->can_use_mail($course) && !user::is_cc_cohort_member($user->id)) {
             throw new exception('errorcoursenotfound', $course->id);
         }
 
@@ -1313,7 +1313,7 @@ class external extends \external_api {
         $user = user::current();
         $course = course::get($params['courseid']);
 
-        if (!$user->can_use_mail($course)) {
+        if (!$user->can_use_mail($course) && !user::is_cc_cohort_member($user->id)) {
             throw new exception('errorcoursenotfound', $course->id);
         }
 
@@ -1386,7 +1386,7 @@ class external extends \external_api {
 
         $user = user::current();
         $course = course::get($params['query']['courseid']);
-        if (!$user->can_use_mail($course)) {
+        if (!$user->can_use_mail($course) && !user::is_cc_cohort_member($user->id)) {
             throw new exception('errorcoursenotfound', $course->id);
         }
 
@@ -1479,7 +1479,7 @@ class external extends \external_api {
 
         $user = user::current();
         $message = message::get($params['messageid']);
-        if (!$user->can_edit_message($message)) {
+        if (!$user->can_edit_message($message) && !$user->can_edit_reply_as_cc_member($message)) {
             throw new exception('errormessagenotfound', $message->id);
         }
         $options = message_data::file_options();
@@ -1571,7 +1571,7 @@ class external extends \external_api {
         if (!$user->can_view_message($message)) {
             throw new exception('errormessagenotfound', $message->id);
         }
-        if (!$user->can_use_mail($message->course)) {
+        if (!$user->can_use_mail($message->course) && !user::is_cc_cohort_member($user->id)) {
             throw new exception('errorcoursenotfound', $message->course->id);
         }
 
@@ -1598,7 +1598,7 @@ class external extends \external_api {
         if (!$user->can_view_message($message)) {
             throw new exception('errormessagenotfound', $message->id);
         }
-        if (!$user->can_use_mail($message->course)) {
+        if (!$user->can_use_mail($message->course) && !user::is_cc_cohort_member($user->id)) {
             throw new exception('errorcoursenotfound', $message->course->id);
         }
 
@@ -1633,12 +1633,12 @@ class external extends \external_api {
         $user = user::current();
 
         $message = message::get($params['messageid']);
-        if (!$user->can_edit_message($message)) {
+        if (!$user->can_edit_message($message) && !$user->can_edit_reply_as_cc_member($message)) {
             throw new exception('errormessagenotfound', $message->id);
         }
 
         $course = course::get($params['data']['courseid']);
-        if (!$user->can_use_mail($course)) {
+        if (!$user->can_use_mail($course) && !user::is_cc_cohort_member($user->id)) {
             throw new exception('errorcoursenotfound', $course->id);
         }
 
@@ -1677,7 +1677,7 @@ class external extends \external_api {
         $user = user::current();
 
         $message = message::get($params['messageid']);
-        if (!$user->can_edit_message($message)) {
+        if (!$user->can_edit_message($message) && !$user->can_edit_reply_as_cc_member($message)) {
             throw new exception('errormessagenotfound', $message->id);
         }
 
