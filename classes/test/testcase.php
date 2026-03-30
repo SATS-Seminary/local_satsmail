@@ -184,6 +184,41 @@ abstract class testcase extends \advanced_testcase {
     }
 
     /**
+     * Asserts that sink contains message_sent events for each recipient of a message.
+     *
+     * @param message $message The sent message.
+     * @param \phpunit_event_sink $sink Event sink.
+     */
+    protected static function assert_message_sent_events(message $message, \phpunit_event_sink $sink): void {
+        global $USER;
+
+        $events = array_values(array_filter(
+            $sink->get_events(),
+            fn (\core\event\base $event) => $event->eventname === '\local_satsmail\event\message_sent'
+        ));
+
+        $recipients = $message->recipients();
+        self::assertEquals(count($recipients), count($events));
+
+        $eventrecipients = array_map(fn ($e) => (int) $e->relateduserid, $events);
+        foreach ($recipients as $recipient) {
+            self::assertContains($recipient->id, $eventrecipients);
+        }
+
+        $type = count($recipients) > 1 ? 'group' : 'personal';
+        foreach ($events as $event) {
+            self::assertEquals($USER->id, $event->userid);
+            self::assertEquals($message->id, $event->objectid);
+            self::assertEquals($message->course->id, $event->courseid);
+            self::assertEquals($message->course->get_context()->id, $event->contextid);
+            self::assertEquals($type, $event->other['type']);
+            self::assertContains($event->other['role'], ['to', 'cc', 'bcc']);
+        }
+
+        $sink->close();
+    }
+
+    /**
      * Asserts that the table contains this number of records matching the conditions.
      *
      * @param int $expected Expected number of rows.

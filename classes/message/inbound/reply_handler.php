@@ -248,7 +248,7 @@ class reply_handler extends \core\message\inbound\handler {
         // Send the message.
         $replymessage->send(time());
 
-        event\message_sent::create_from_message($replymessage)->trigger();
+        event\message_sent::trigger_for_recipients($replymessage);
 
         debugging(
             "local_satsmail inbound: Sent reply message {$replymessage->id} successfully",

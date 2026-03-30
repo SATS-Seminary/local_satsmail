@@ -1,5 +1,22 @@
 # Changelog
 
+## [2.2] - 2026-03-30
+
+### Changed
+
+- The `message_sent` event now fires once per recipient instead of once per message. Each event records the recipient (`relateduserid`), their role (to, cc, bcc), and whether the message was personal (single recipient) or group (multiple recipients). This enables tracking in Moodle's standard logs when a teacher messages a specific user, even in group sends.
+
+## [2.1] - 2026-02-28
+
+### Added
+
+- CC cohort support: members of a configured cohort can be added as CC recipients on any message, regardless of course enrollment.
+- Enrollment-independent mail access for CC cohort members.
+
+### Fixed
+
+- CC cohort members unable to reply to messages.
+
 ## [2.0] - 2026-02-07
 
 ### Added

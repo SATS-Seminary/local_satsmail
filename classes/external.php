@@ -1722,7 +1722,7 @@ class external extends \external_api {
 
         $message->send(time());
 
-        event\message_sent::create_from_message($message)->trigger();
+        event\message_sent::trigger_for_recipients($message);
 
         $renderer = $PAGE->get_renderer('local_satsmail');
         foreach ($message->recipients() as $recipient) {

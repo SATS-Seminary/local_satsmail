@@ -118,7 +118,7 @@ final class event_test extends test\testcase {
         );
     }
 
-    public function test_message_sent(): void {
+    public function test_message_sent_personal(): void {
         $generator = self::getDataGenerator();
         $course = new course($generator->create_course());
         $user1 = new user($generator->create_user());
@@ -130,13 +130,17 @@ final class event_test extends test\testcase {
         $message->send(time());
         self::setUser($user1->id);
 
-        $event = event\message_sent::create_from_message($message);
+        $event = event\message_sent::create_for_recipient($message, $user2, message::ROLE_TO, 'personal');
 
         self::assertEquals(output\strings::get('eventmessagesent'), event\message_sent::get_name());
         self::assertEquals(
-            "The user with id '$user1->id' has sent the message with id '$message->id'.",
+            "The user with id '$user1->id' has sent the message with id '$message->id'"
+            . " to the user with id '$user2->id' (role: to, type: personal).",
             $event->get_description()
         );
+        self::assertEquals($user2->id, $event->relateduserid);
+        self::assertEquals('to', $event->other['role']);
+        self::assertEquals('personal', $event->other['type']);
         self::assertEquals(
             new \moodle_url('/local/satsmail/view.php', ['t' => 'course', 'c' => $message->course->id, 'm' => $message->id]),
             $event->get_url()
@@ -145,6 +149,46 @@ final class event_test extends test\testcase {
             ['db' => 'local_satsmail_messages', 'restore' => 'local_satsmail_message'],
             event\message_sent::get_objectid_mapping()
         );
+    }
+
+    public function test_message_sent_group(): void {
+        $generator = self::getDataGenerator();
+        $course = new course($generator->create_course());
+        $user1 = new user($generator->create_user());
+        $user2 = new user($generator->create_user());
+        $user3 = new user($generator->create_user());
+        $user4 = new user($generator->create_user());
+        $data = message_data::new($course, $user1);
+        $data->to = [$user2, $user3];
+        $data->cc = [$user4];
+        $data->subject = 'Subject';
+        $message = message::create($data);
+        $message->send(time());
+        self::setUser($user1->id);
+
+        $eventsink = $this->redirectEvents();
+        event\message_sent::trigger_for_recipients($message);
+        $events = array_values(array_filter(
+            $eventsink->get_events(),
+            fn (\core\event\base $e) => $e->eventname === '\local_satsmail\event\message_sent'
+        ));
+        $eventsink->close();
+
+        self::assertCount(3, $events);
+        foreach ($events as $event) {
+            self::assertEquals($user1->id, $event->userid);
+            self::assertEquals($message->id, $event->objectid);
+            self::assertEquals('group', $event->other['type']);
+            self::assertNotNull($event->relateduserid);
+        }
+
+        $recipientids = array_map(fn ($e) => (int) $e->relateduserid, $events);
+        self::assertContains($user2->id, $recipientids);
+        self::assertContains($user3->id, $recipientids);
+        self::assertContains($user4->id, $recipientids);
+
+        $ccevent = array_values(array_filter($events, fn ($e) => (int) $e->relateduserid === $user4->id));
+        self::assertEquals('cc', $ccevent[0]->other['role']);
     }
 
     public function test_message_viewed(): void {

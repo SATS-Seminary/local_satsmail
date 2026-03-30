@@ -2240,7 +2240,7 @@ final class external_test extends test\testcase {
             self::assertEquals($expected->contexturlname, $notifications[$i]->contexturlname);
         }
 
-        self::assert_message_event('\local_satsmail\event\message_sent', $message, $eventsink);
+        self::assert_message_sent_events($message, $eventsink);
 
         // User cannot edit message.
 
