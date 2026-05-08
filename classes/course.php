@@ -169,13 +169,28 @@ class course {
      * @return string[] Array of group names, including "All groups", indexed by ID.
      */
     public function get_viewable_groups(user $user): array {
+        $context = $this->get_context();
+
         if ($this->groupmode == NOGROUPS) {
-            return [];
+            // In a course without group mode, only users with the dedicated capability
+            // see a group filter, and only for groups they are members of.
+            if (!has_capability('local/satsmail:viewgroups', $context, $user->id)) {
+                return [];
+            }
+            $usergroups = groups_get_all_groups($this->id, $user->id);
+            if (!$usergroups) {
+                return [];
+            }
+            $result = [0 => get_string('allgroups', 'local_satsmail')];
+            foreach ($usergroups as $group) {
+                $result[$group->id] = $group->name;
+            }
+            return $result;
         }
 
         $result = [];
 
-        $accessallgroups = has_capability('moodle/site:accessallgroups', $this->get_context(), $user->id);
+        $accessallgroups = has_capability('moodle/site:accessallgroups', $context, $user->id);
 
         if ($this->groupmode == VISIBLEGROUPS || $accessallgroups) {
             $result[0] = get_string('allgroups', 'local_satsmail');

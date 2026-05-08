@@ -5,8 +5,8 @@ South African Theological Seminary
 
 defined('MOODLE_INTERNAL') || die();
 
-$plugin->version = 2026033000;
+$plugin->version = 2026050801;
 $plugin->requires = 2022112800;
 $plugin->component = 'local_satsmail';
 $plugin->maturity = MATURITY_STABLE;
-$plugin->release = '2.2';
+$plugin->release = '2.2.4';

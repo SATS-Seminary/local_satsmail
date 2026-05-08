@@ -248,6 +248,8 @@ class external extends \external_api {
                 'fullname' => external_format_string($course->fullname, $context),
                 'visible' => $course->visible,
                 'groupmode' => $course->groupmode,
+                'canmailall' => $user->can_mail_all($course),
+                'canmailgroups' => $user->can_mail_groups($course),
                 'unread' => $unread[$course->id] ?? 0,
                 'drafts' => $drafts[$course->id] ?? 0,
             ];
@@ -264,6 +266,8 @@ class external extends \external_api {
                 'fullname' => new \external_value(PARAM_RAW, 'Full name of the course'),
                 'visible' => new \external_value(PARAM_BOOL, 'Course visibility'),
                 'groupmode' => new \external_value(PARAM_INT, 'Group mode: 0 (no), 1 (separate) or 2 (visible)'),
+                'canmailall' => new \external_value(PARAM_BOOL, 'User may mail all users in the course'),
+                'canmailgroups' => new \external_value(PARAM_BOOL, 'User may bulk-mail a whole group in the course'),
                 'unread' => new \external_value(PARAM_INT, 'Number of unread messages'),
                 'drafts' => new \external_value(PARAM_INT, 'Number of drafts'),
             ])
@@ -580,6 +584,8 @@ class external extends \external_api {
                     'fullname' => external_format_string($course->fullname, $context),
                     'visible' => $course->visible,
                     'groupmode' => $course->groupmode,
+                    'canmailall' => $user->can_mail_all($course),
+                    'canmailgroups' => $user->can_mail_groups($course),
                 ],
                 'sender' => [
                     'id' => $sender->id,
@@ -617,6 +623,8 @@ class external extends \external_api {
                     'fullname' => new \external_value(PARAM_RAW, 'Full name of the course'),
                     'visible' => new \external_value(PARAM_BOOL, 'Course visibility'),
                     'groupmode' => new \external_value(PARAM_INT, 'Group mode: 0 (no), 1 (separate) or 2 (visible)'),
+                    'canmailall' => new \external_value(PARAM_BOOL, 'User may mail all users in the course'),
+                    'canmailgroups' => new \external_value(PARAM_BOOL, 'User may bulk-mail a whole group in the course'),
                 ], '', VALUE_OPTIONAL),
                 'sender' => new \external_single_structure([
                     'id' => new \external_value(PARAM_INT, 'Id of the user'),
@@ -702,6 +710,8 @@ class external extends \external_api {
                 'fullname' => external_format_string($course->fullname, $context),
                 'visible' => $course->visible,
                 'groupmode' => $course->groupmode,
+                'canmailall' => $user->can_mail_all($course),
+                'canmailgroups' => $user->can_mail_groups($course),
             ],
             'sender' => [
                 'id' => $sender->id,
@@ -845,6 +855,8 @@ class external extends \external_api {
                 'fullname' => new \external_value(PARAM_RAW, 'Full name of the course'),
                 'visible' => new \external_value(PARAM_BOOL, 'Course visibility'),
                 'groupmode' => new \external_value(PARAM_INT, 'Group mode: 0 (no), 1 (separate) or 2 (visible)'),
+                'canmailall' => new \external_value(PARAM_BOOL, 'User may mail all users in the course'),
+                'canmailgroups' => new \external_value(PARAM_BOOL, 'User may bulk-mail a whole group in the course'),
             ]),
             'sender' => new \external_single_structure([
                 'id' => new \external_value(PARAM_INT, 'Id of the user'),
@@ -1712,6 +1724,11 @@ class external extends \external_api {
         }
 
         $maxrecipients = (int) get_config('local_satsmail', 'maxrecipients') ?: 100;
+        // Users without the mailall or mailgroups capability cannot bulk-mail recipients.
+        // Cap their recipient count well below the global maximum.
+        if (!$user->can_mail_all($message->course) && !$user->can_mail_groups($message->course)) {
+            $maxrecipients = min($maxrecipients, 20);
+        }
         if (count($recipients) > $maxrecipients) {
             throw new exception('errortoomanyrecipients', $maxrecipients);
         }

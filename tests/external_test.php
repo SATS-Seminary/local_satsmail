@@ -269,6 +269,8 @@ final class external_test extends test\testcase {
                     'fullname' => $course->fullname,
                     'visible' => $course->visible,
                     'groupmode' => $course->groupmode,
+                    'canmailall' => $user->can_mail_all($course),
+                    'canmailgroups' => $user->can_mail_groups($course),
                     'unread' => $unread,
                     'drafts' => $drafts,
                 ];
@@ -640,6 +642,8 @@ final class external_test extends test\testcase {
                 'fullname' => external_format_string($course->fullname, $course->get_context()),
                 'visible' => $course->visible,
                 'groupmode' => $course->groupmode,
+                'canmailall' => $user1->can_mail_all($course),
+                'canmailgroups' => $user1->can_mail_groups($course),
             ],
             'sender' => [
                 'id' => $user2->id,

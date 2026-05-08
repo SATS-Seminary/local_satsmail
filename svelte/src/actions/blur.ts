@@ -15,7 +15,16 @@ export function blur(node: HTMLElement, handler: () => void) {
         }
     }
 
+    function handleFocusIn(event: FocusEvent) {
+        // Catches focus moving into elements that swallow click events (e.g. TinyMCE iframes),
+        // where mousedown on the parent document never fires.
+        if (event.target instanceof Node && !node.contains(event.target)) {
+            handler();
+        }
+    }
+
     document.addEventListener('mousedown', handleMouseDown, { capture: true, passive: true });
+    document.addEventListener('focusin', handleFocusIn, { capture: true, passive: true });
     node.addEventListener('focusout', handleFocusOut);
 
     return {
@@ -24,6 +33,7 @@ export function blur(node: HTMLElement, handler: () => void) {
         },
         destroy() {
             document.removeEventListener('mousedown', handleMouseDown, { capture: true });
+            document.removeEventListener('focusin', handleFocusIn, { capture: true });
             node.removeEventListener('focusout', handleFocusOut);
         },
     };

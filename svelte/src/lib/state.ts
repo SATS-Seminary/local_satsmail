@@ -17,6 +17,8 @@ export interface Course {
     readonly fullname: string;
     readonly visible: boolean;
     readonly groupmode: GroupMode;
+    readonly canmailall?: boolean;
+    readonly canmailgroups?: boolean;
     readonly unread: number;
     readonly drafts: number;
 }

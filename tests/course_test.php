@@ -173,8 +173,12 @@ final class course_test extends test\testcase {
         // Student in course with no groups.
         self::assertSame([], $course1->get_viewable_groups($user1));
 
-        // Teacher in course with no groups.
-        self::assertSame([], $course1->get_viewable_groups($user2));
+        // Teacher in course with no groups: sees groups they are a member of.
+        $expected = [
+            0 => get_string('allgroups', 'local_satsmail'),
+            $group1->id => $group1->name,
+        ];
+        self::assertSame($expected, $course1->get_viewable_groups($user2));
 
         // Student in course with visible groups.
         $expected = [

@@ -141,6 +141,26 @@ class user {
     }
 
     /**
+     * Returns whether the user can mail all users in a course at once.
+     *
+     * @param course $course Course.
+     * @return bool
+     */
+    public function can_mail_all(course $course): bool {
+        return has_capability('local/satsmail:mailall', $course->get_context(), $this->id);
+    }
+
+    /**
+     * Returns whether the user can bulk-mail a whole group in a course.
+     *
+     * @param course $course Course.
+     * @return bool
+     */
+    public function can_mail_groups(course $course): bool {
+        return has_capability('local/satsmail:mailgroups', $course->get_context(), $this->id);
+    }
+
+    /**
      * Returns whether a CC cohort member can edit a reply draft.
      *
      * This allows CC cohort members (not enrolled in the course) to edit
@@ -184,11 +204,11 @@ class user {
     public function can_view_group(course $course, int $groupid): bool {
         if (!$this->can_use_mail($course) && !self::is_cc_cohort_member($this->id)) {
             return false;
-        } else if ($course->groupmode == NOGROUPS) {
-            return $groupid == 0;
-        } else {
-            return array_key_exists($groupid, $course->get_viewable_groups($this));
         }
+        if ($course->groupmode == NOGROUPS && $groupid == 0) {
+            return true;
+        }
+        return array_key_exists($groupid, $course->get_viewable_groups($this));
     }
 
     /**

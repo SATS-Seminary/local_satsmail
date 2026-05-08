@@ -1,5 +1,24 @@
 # Changelog
 
+## [2.2.4] - 2026-05-08
+
+### Added
+
+- New capability `local/satsmail:mailall` controls who can bulk-mail every user in a course. Granted by default to editing teachers and managers; not to students.
+- New capability `local/satsmail:viewgroups` lets users see groups they belong to in the recipient picker even when the course's group mode is "No groups". Granted by default to teachers, editing teachers, and managers.
+- New capability `local/satsmail:mailgroups` controls who can bulk-mail an entire group at once. Granted by default to teachers, editing teachers, and managers.
+- Group-aware recipient picker: when a teacher with the `mailgroups` capability filters by a specific group, all members of that group are pre-selected as BCC recipients with a checkbox UI. The teacher can deselect individual members; the master checkbox toggles the whole group.
+- Recipients of a group send only see themselves in the recipient list, preserving classmate privacy. Each notification is delivered as an individual email — no SMTP BCC header is set.
+
+### Changed
+
+- `send_message` enforces a recipient cap of 20 for users without `mailall` or `mailgroups`, defending against UI-bypass spam while leaving legitimate group sends unrestricted (still subject to the global `maxrecipients` limit).
+- Recipient picker dropdown now collapses reliably when focus moves to elements that swallow click events, such as the TinyMCE editor iframe.
+
+### Fixed
+
+- Late-arriving search responses no longer re-open the recipient dropdown after the user has clicked away.
+
 ## [2.2] - 2026-03-30
 
 ### Changed

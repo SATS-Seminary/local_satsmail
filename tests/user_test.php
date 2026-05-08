@@ -104,9 +104,9 @@ final class user_test extends test\testcase {
         $this->assertFalse($user1->can_view_group($course1, $group1->id));
         $this->assertFalse($user1->can_view_group($course1, $group2->id));
 
-        // Teacher in course with no groups.
+        // Teacher in course with no groups: can view their own groups.
         $this->assertTrue($user2->can_view_group($course1, 0));
-        $this->assertFalse($user2->can_view_group($course1, $group1->id));
+        $this->assertTrue($user2->can_view_group($course1, $group1->id));
         $this->assertFalse($user2->can_view_group($course1, $group2->id));
 
         // Student in course with visible groups.
