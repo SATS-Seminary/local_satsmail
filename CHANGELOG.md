@@ -1,5 +1,16 @@
 # Changelog
 
+## [2.2.5] - 2026-05-08
+
+### Added
+
+- New site setting "Number of recipients (students)" caps how many recipients a user without the `mailall` or `mailgroups` capabilities can address per message. Defaults to 2.
+- The recipient over-limit alert in the compose form now shows the effective per-course cap, so students see "limit of 2 recipients" instead of the global figure.
+
+### Changed
+
+- The previously hardcoded 20-recipient cap for non-`mailall`/`mailgroups` users is now driven by the new `studentmaxrecipients` setting.
+
 ## [2.2.4] - 2026-05-08
 
 ### Added

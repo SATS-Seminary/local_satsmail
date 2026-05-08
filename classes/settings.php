@@ -12,6 +12,9 @@ class settings {
     /** @var int Maximum number of recipients allowed per message. */
     public int $maxrecipients = 100;
 
+    /** @var int Maximum number of recipients allowed per message for users without mailall/mailgroups capabilities (e.g. students). */
+    public int $studentmaxrecipients = 2;
+
     /** @var int Maximum number of results displayed in the user search. */
     public int $usersearchlimit = 100;
 
@@ -90,6 +93,9 @@ class settings {
         }
         if (isset($config->maxrecipients)) {
             $settings->maxrecipients = (int) $config->maxrecipients;
+        }
+        if (isset($config->studentmaxrecipients)) {
+            $settings->studentmaxrecipients = (int) $config->studentmaxrecipients;
         }
         if (isset($config->usersearchlimit)) {
             $settings->usersearchlimit = (int) $config->usersearchlimit;

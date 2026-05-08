@@ -35,6 +35,14 @@ if ($hassiteconfig) {
     $paramtype = PARAM_INT;
     $settings->add(new admin_setting_configtext($name, $visiblename, $description, $defaultsetting, $paramtype));
 
+    // Number of recipients for students.
+    $name = 'local_satsmail/studentmaxrecipients';
+    $visiblename = strings::get('configstudentmaxrecipients');
+    $description = strings::get('configstudentmaxrecipientsdesc');
+    $defaultsetting = $defaults->studentmaxrecipients;
+    $paramtype = PARAM_INT;
+    $settings->add(new admin_setting_configtext($name, $visiblename, $description, $defaultsetting, $paramtype));
+
     // User search limit.
     $name = 'local_satsmail/usersearchlimit';
     $visiblename = strings::get('configusersearchlimit');

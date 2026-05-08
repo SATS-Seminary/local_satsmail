@@ -30,6 +30,10 @@ class external extends \external_api {
                 PARAM_INT,
                 'Maximum number of recipients allowed per message'
             ),
+            'studentmaxrecipients' => new \external_value(
+                PARAM_INT,
+                'Maximum recipients per message for users without mailall/mailgroups capabilities'
+            ),
             'usersearchlimit' => new \external_value(
                 PARAM_INT,
                 'Maximum number of results displayed in the user search'
@@ -1725,9 +1729,13 @@ class external extends \external_api {
 
         $maxrecipients = (int) get_config('local_satsmail', 'maxrecipients') ?: 100;
         // Users without the mailall or mailgroups capability cannot bulk-mail recipients.
-        // Cap their recipient count well below the global maximum.
+        // Cap their recipient count using the configured student limit.
         if (!$user->can_mail_all($message->course) && !$user->can_mail_groups($message->course)) {
-            $maxrecipients = min($maxrecipients, 20);
+            $studentmax = (int) get_config('local_satsmail', 'studentmaxrecipients');
+            if ($studentmax <= 0) {
+                $studentmax = 2;
+            }
+            $maxrecipients = min($maxrecipients, $studentmax);
         }
         if (count($recipients) > $maxrecipients) {
             throw new exception('errortoomanyrecipients', $maxrecipients);

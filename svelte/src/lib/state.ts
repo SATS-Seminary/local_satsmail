@@ -181,6 +181,7 @@ export interface ServiceError {
 
 export interface Settings {
     readonly maxrecipients: number;
+    readonly studentmaxrecipients: number;
     readonly autosaveinterval: number;
     readonly usersearchlimit: number;
     readonly globaltrays: ReadonlyArray<string>;

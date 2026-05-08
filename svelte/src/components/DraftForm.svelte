@@ -33,6 +33,13 @@ South African Theological Seminary
     $: courseid = message.course.id;
     $: subject = message.subject;
     $: recipients = new Map(message.recipients.map((user) => [user.id, user]));
+    $: effectiveMaxRecipients =
+        message.course.canmailall || message.course.canmailgroups
+            ? $store.settings.maxrecipients
+            : Math.min(
+                  $store.settings.maxrecipients,
+                  $store.settings.studentmaxrecipients,
+              );
 
     onMount(() => {
         formNode?.addEventListener('core_form/uploadChanged', () => save());
@@ -211,12 +218,12 @@ South African Theological Seminary
             <i class="fa fa-exclamation-circle mr-2" />
             {$store.strings.erroremptyrecipients}
         </div>
-    {:else if recipients.size > $store.settings.maxrecipients}
+    {:else if recipients.size > effectiveMaxRecipients}
         <div class="alert alert-danger">
             <i class="fa fa-exclamation-circle mr-2" />
             {replaceStringParams(
                 $store.strings.errortoomanyrecipients,
-                $store.settings.maxrecipients,
+                effectiveMaxRecipients,
             )}
         </div>
     {/if}
