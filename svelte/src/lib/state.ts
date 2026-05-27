@@ -19,6 +19,7 @@ export interface Course {
     readonly groupmode: GroupMode;
     readonly canmailall?: boolean;
     readonly canmailgroups?: boolean;
+    readonly canunlimitedrecipients?: boolean;
     readonly unread: number;
     readonly drafts: number;
 }
@@ -255,6 +256,7 @@ export interface User {
     readonly pictureurl: string;
     readonly profileurl: string;
     readonly sortorder: string;
+    readonly iscohortonly?: boolean;
 }
 
 export interface ViewParams {

@@ -254,6 +254,7 @@ class external extends \external_api {
                 'groupmode' => $course->groupmode,
                 'canmailall' => $user->can_mail_all($course),
                 'canmailgroups' => $user->can_mail_groups($course),
+                'canunlimitedrecipients' => $user->can_send_unlimited_recipients($course),
                 'unread' => $unread[$course->id] ?? 0,
                 'drafts' => $drafts[$course->id] ?? 0,
             ];
@@ -272,6 +273,7 @@ class external extends \external_api {
                 'groupmode' => new \external_value(PARAM_INT, 'Group mode: 0 (no), 1 (separate) or 2 (visible)'),
                 'canmailall' => new \external_value(PARAM_BOOL, 'User may mail all users in the course'),
                 'canmailgroups' => new \external_value(PARAM_BOOL, 'User may bulk-mail a whole group in the course'),
+                'canunlimitedrecipients' => new \external_value(PARAM_BOOL, 'User is exempt from the student recipient limit'),
                 'unread' => new \external_value(PARAM_INT, 'Number of unread messages'),
                 'drafts' => new \external_value(PARAM_INT, 'Number of drafts'),
             ])
@@ -590,6 +592,7 @@ class external extends \external_api {
                     'groupmode' => $course->groupmode,
                     'canmailall' => $user->can_mail_all($course),
                     'canmailgroups' => $user->can_mail_groups($course),
+                    'canunlimitedrecipients' => $user->can_send_unlimited_recipients($course),
                 ],
                 'sender' => [
                     'id' => $sender->id,
@@ -629,6 +632,7 @@ class external extends \external_api {
                     'groupmode' => new \external_value(PARAM_INT, 'Group mode: 0 (no), 1 (separate) or 2 (visible)'),
                     'canmailall' => new \external_value(PARAM_BOOL, 'User may mail all users in the course'),
                     'canmailgroups' => new \external_value(PARAM_BOOL, 'User may bulk-mail a whole group in the course'),
+                    'canunlimitedrecipients' => new \external_value(PARAM_BOOL, 'User is exempt from the student recipient limit'),
                 ], '', VALUE_OPTIONAL),
                 'sender' => new \external_single_structure([
                     'id' => new \external_value(PARAM_INT, 'Id of the user'),
@@ -716,6 +720,7 @@ class external extends \external_api {
                 'groupmode' => $course->groupmode,
                 'canmailall' => $user->can_mail_all($course),
                 'canmailgroups' => $user->can_mail_groups($course),
+                'canunlimitedrecipients' => $user->can_send_unlimited_recipients($course),
             ],
             'sender' => [
                 'id' => $sender->id,
@@ -861,6 +866,7 @@ class external extends \external_api {
                 'groupmode' => new \external_value(PARAM_INT, 'Group mode: 0 (no), 1 (separate) or 2 (visible)'),
                 'canmailall' => new \external_value(PARAM_BOOL, 'User may mail all users in the course'),
                 'canmailgroups' => new \external_value(PARAM_BOOL, 'User may bulk-mail a whole group in the course'),
+                'canunlimitedrecipients' => new \external_value(PARAM_BOOL, 'User is exempt from the student recipient limit'),
             ]),
             'sender' => new \external_single_structure([
                 'id' => new \external_value(PARAM_INT, 'Id of the user'),
@@ -1431,6 +1437,8 @@ class external extends \external_api {
         $users = $search->get($params['offset'], $params['limit']);
 
         // Also include members of the configured CC cohort (if any), ignoring role/group filters.
+        // Cohort-only users are flagged so the client never auto-selects them on a group pick —
+        // the cohort is for ad-hoc support / coordinator queries and must always be added manually.
         $cohortusers = user::search_cc_cohort(
             $user->id,
             $params['query']['fullname'] ?? '',
@@ -1438,16 +1446,18 @@ class external extends \external_api {
             $params['offset'],
             $params['limit'],
         );
+        $cohortonlyids = [];
         foreach ($cohortusers as $cohortuser) {
             if (!isset($users[$cohortuser->id])) {
                 $users[$cohortuser->id] = $cohortuser;
+                $cohortonlyids[$cohortuser->id] = true;
             }
         }
 
-        return self::search_users_response($course, $users);
+        return self::search_users_response($course, $users, $cohortonlyids);
     }
 
-    public static function search_users_response(course $course, array $users) {
+    public static function search_users_response(course $course, array $users, array $cohortonlyids = []) {
         $result = [];
 
         foreach ($users as $user) {
@@ -1459,6 +1469,7 @@ class external extends \external_api {
                 'pictureurl' => $user->picture_url(),
                 'profileurl' => $user->profile_url($course),
                 'sortorder' => $user->sortorder(),
+                'iscohortonly' => !empty($cohortonlyids[$user->id]),
             ];
         }
 
@@ -1475,6 +1486,10 @@ class external extends \external_api {
                 'pictureurl' => new \external_value(PARAM_URL, 'User image URL'),
                 'profileurl' => new \external_value(PARAM_URL, 'User profile URL'),
                 'sortorder' => new \external_value(PARAM_RAW, 'User sort order'),
+                'iscohortonly' => new \external_value(
+                    PARAM_BOOL,
+                    'True when the user is only reachable via the CC cohort (not enrolled in the course).'
+                ),
             ])
         );
     }
@@ -1728,9 +1743,9 @@ class external extends \external_api {
         }
 
         $maxrecipients = (int) get_config('local_satsmail', 'maxrecipients') ?: 100;
-        // Users without the mailall or mailgroups capability cannot bulk-mail recipients.
-        // Cap their recipient count using the configured student limit.
-        if (!$user->can_mail_all($message->course) && !$user->can_mail_groups($message->course)) {
+        // Users without the unlimitedrecipients capability (e.g. students) are capped
+        // at the configured student limit, regardless of their bulk-mail capabilities.
+        if (!$user->can_send_unlimited_recipients($message->course)) {
             $studentmax = (int) get_config('local_satsmail', 'studentmaxrecipients');
             if ($studentmax <= 0) {
                 $studentmax = 2;

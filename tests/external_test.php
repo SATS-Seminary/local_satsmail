@@ -271,6 +271,7 @@ final class external_test extends test\testcase {
                     'groupmode' => $course->groupmode,
                     'canmailall' => $user->can_mail_all($course),
                     'canmailgroups' => $user->can_mail_groups($course),
+                    'canunlimitedrecipients' => $user->can_send_unlimited_recipients($course),
                     'unread' => $unread,
                     'drafts' => $drafts,
                 ];
@@ -644,6 +645,7 @@ final class external_test extends test\testcase {
                 'groupmode' => $course->groupmode,
                 'canmailall' => $user1->can_mail_all($course),
                 'canmailgroups' => $user1->can_mail_groups($course),
+                'canunlimitedrecipients' => $user1->can_send_unlimited_recipients($course),
             ],
             'sender' => [
                 'id' => $user2->id,

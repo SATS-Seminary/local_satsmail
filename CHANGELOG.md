@@ -1,5 +1,15 @@
 # Changelog
 
+## [2.2.7] - 2026-05-27
+
+### Changed
+
+- The student per-message recipient cap is now scoped by a dedicated capability `local/satsmail:unlimitedrecipients` (granted by default to teachers, editing teachers, and managers) instead of being inferred from the absence of `mailall`/`mailgroups`. Users with multiple roles whose effective capabilities include `unlimitedrecipients` will no longer be incorrectly throttled to the student limit.
+
+### Fixed
+
+- Picking a specific group in the recipient filter no longer also auto-adds CC cohort members to the BCC list. Cohort users (support / programme coordinators) remain visible in the dropdown and can still be ticked manually, but are never appended automatically — neither by the group auto-select nor by the group "select all" header checkbox.
+
 ## [2.2.5] - 2026-05-08
 
 ### Added

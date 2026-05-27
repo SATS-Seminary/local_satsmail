@@ -122,11 +122,15 @@ South African Theological Seminary
                     expanded = true;
                 }
                 // Preselect every member when a teacher just chose a specific group.
+                // CC-cohort-only users (support / coordinators) are never auto-added — the cohort
+                // is for ad-hoc manual selection, even when a group is being mailed.
                 if (pendingGroupAutoSelect) {
                     pendingGroupAutoSelect = false;
                     if (users.length && groupid > 0 && course?.canmailgroups) {
                         const toAdd = users.filter(
-                            (user) => recipients.get(user.id)?.type !== RecipientType.BCC,
+                            (user) =>
+                                !user.iscohortonly &&
+                                recipients.get(user.id)?.type !== RecipientType.BCC,
                         );
                         if (toAdd.length) {
                             onChange(toAdd, RecipientType.BCC);
@@ -212,7 +216,8 @@ South African Theological Seminary
                 </div>
             {:else}
                 {#if groupCheckboxMode}
-                    {@const allChecked = users.length > 0 && users.every(
+                    {@const groupUsers = users.filter((user) => !user.iscohortonly)}
+                    {@const allChecked = groupUsers.length > 0 && groupUsers.every(
                         (user) => recipients.get(user.id)?.type == RecipientType.BCC,
                     )}
                     <div class="list-group-item d-flex align-items-sm-center p-0">
@@ -229,7 +234,7 @@ South African Theological Seminary
                                     class="mr-2"
                                     checked={allChecked}
                                     on:change={() =>
-                                        onChange(users, allChecked ? null : RecipientType.BCC)}
+                                        onChange(groupUsers, allChecked ? null : RecipientType.BCC)}
                                 />
                                 <span class="font-weight-bold">{selectedGroupName}</span>
                             </label>

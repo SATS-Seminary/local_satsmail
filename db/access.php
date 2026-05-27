@@ -56,5 +56,15 @@ $capabilities = [
             'manager'        => CAP_ALLOW,
         ],
     ],
+    'local/satsmail:unlimitedrecipients' => [
+        'riskbitmask'  => RISK_SPAM,
+        'captype'      => 'write',
+        'contextlevel' => CONTEXT_COURSE,
+        'archetypes'   => [
+            'teacher'        => CAP_ALLOW,
+            'editingteacher' => CAP_ALLOW,
+            'manager'        => CAP_ALLOW,
+        ],
+    ],
 ];
 

@@ -133,6 +133,7 @@ $string['locked'] = 'Locked';
 $string['satsmail:mailall'] = 'Send mail to all users in a course';
 $string['satsmail:mailgroups'] = 'Send mail to a whole group at once (delivered as BCC)';
 $string['satsmail:mailsamerole'] = 'Send mail to users with the same role';
+$string['satsmail:unlimitedrecipients'] = 'Exempt from the per-message student recipient limit';
 $string['satsmail:usemail'] = 'Use mail';
 $string['satsmail:viewgroups'] = 'View own groups when filtering recipients in a course without group mode';
 $string['markasread'] = 'Mark as read';

@@ -161,6 +161,16 @@ class user {
     }
 
     /**
+     * Returns whether the user is exempt from the per-message student recipient cap.
+     *
+     * @param course $course Course.
+     * @return bool
+     */
+    public function can_send_unlimited_recipients(course $course): bool {
+        return has_capability('local/satsmail:unlimitedrecipients', $course->get_context(), $this->id);
+    }
+
+    /**
      * Returns whether a CC cohort member can edit a reply draft.
      *
      * This allows CC cohort members (not enrolled in the course) to edit

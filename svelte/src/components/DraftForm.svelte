@@ -33,13 +33,12 @@ South African Theological Seminary
     $: courseid = message.course.id;
     $: subject = message.subject;
     $: recipients = new Map(message.recipients.map((user) => [user.id, user]));
-    $: effectiveMaxRecipients =
-        message.course.canmailall || message.course.canmailgroups
-            ? $store.settings.maxrecipients
-            : Math.min(
-                  $store.settings.maxrecipients,
-                  $store.settings.studentmaxrecipients,
-              );
+    $: effectiveMaxRecipients = message.course.canunlimitedrecipients
+        ? $store.settings.maxrecipients
+        : Math.min(
+              $store.settings.maxrecipients,
+              $store.settings.studentmaxrecipients,
+          );
 
     onMount(() => {
         formNode?.addEventListener('core_form/uploadChanged', () => save());
