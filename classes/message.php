@@ -1,23 +1,52 @@
 <?php
-/*
-South African Theological Seminary
- */
+// This file is part of Moodle - https://moodle.org/
+//
+// Moodle is free software: you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation, either version 3 of the License, or
+// (at your option) any later version.
+//
+// Moodle is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU General Public License for more details.
+//
+// You should have received a copy of the GNU General Public License
+// along with Moodle.  If not, see <https://www.gnu.org/licenses/>.
 
+/**
+ * Message.
+ *
+ * @package    local_satsmail
+ * @copyright  2026 South African Theological Seminary
+ * @license    https://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
 namespace local_satsmail;
 
 use local_satsmail\output\strings;
 
+/**
+ * Message sent or received by a user.
+ */
 class message {
-    // Deleted stataus constants.
+    // Deleted status constants.
+    /** @var int Message is not deleted. */
     const NOT_DELETED = 0;
+    /** @var int Message is in the trash. */
     const DELETED = 1;
+    /** @var int Message is permanently deleted. */
     const DELETED_FOREVER = 2;
+    /** @var int Content of the message is permanently deleted. */
     const DELETED_CONTENT = 3;
 
     // Role constants.
+    /** @var int Role of the sender of a message. */
     const ROLE_FROM = 1;
+    /** @var int Role of a direct recipient of a message. */
     const ROLE_TO = 2;
+    /** @var int Role of a carbon copy recipient of a message. */
     const ROLE_CC = 3;
+    /** @var int Role of a blind carbon copy recipient of a message. */
     const ROLE_BCC = 4;
 
     /** @var int Message ID. */
@@ -335,7 +364,7 @@ class message {
     /**
      * Gets the references of the message.
      *
-     * @param bool $reverse Return forward references instead of backward references.
+     * @param bool $forward Return forward references instead of backward references.
      * @param int $offset Skip this number of messages.
      * @param int $limit Maximum number of messages, 0 means no limit.
      * @return self[] Array of ordered references indexed by ID.
@@ -387,7 +416,7 @@ class message {
     /**
      * Returns the recipients of the message.
      *
-     * @param int $roles Roles to include. Defaults to all roles.
+     * @param int ...$roles Roles to include. Defaults to all roles.
      * @return user[] Array of sorted users indexed by ID.
      */
     public function recipients(int ...$roles): array {
@@ -901,4 +930,3 @@ class message {
         $transaction->allow_commit();
     }
 }
-

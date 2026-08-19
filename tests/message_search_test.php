@@ -1,11 +1,31 @@
 <?php
-/*
-South African Theological Seminary
- */
+// This file is part of Moodle - https://moodle.org/
+//
+// Moodle is free software: you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation, either version 3 of the License, or
+// (at your option) any later version.
+//
+// Moodle is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU General Public License for more details.
+//
+// You should have received a copy of the GNU General Public License
+// along with Moodle.  If not, see <https://www.gnu.org/licenses/>.
 
+/**
+ * Tests for the message search functionality.
+ *
+ * @package    local_satsmail
+ * @copyright  2026 South African Theological Seminary
+ * @license    https://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
 namespace local_satsmail;
 
 /**
+ * Tests for the message_search class.
+ *
  * @covers \local_satsmail\message_search
  */
 final class message_search_test extends test\testcase {
@@ -91,7 +111,7 @@ final class message_search_test extends test\testcase {
      * @return message[] Found messages, ordered from newer to older and indexed by ID.
      */
     protected static function search_result(array $messages, message_search $search): array {
-        $courseids = $search->course ? [$search->course->id] : array_keys(course::get_by_user($search->user));
+        $courseids = $search->course ? [$search->course->id] : array_keys(course::get_all_for_user($search->user));
 
         $result = [];
 
@@ -163,4 +183,3 @@ final class message_search_test extends test\testcase {
         return $result;
     }
 }
-

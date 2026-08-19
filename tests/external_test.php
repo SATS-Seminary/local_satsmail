@@ -1,11 +1,31 @@
 <?php
-/*
-South African Theological Seminary
- */
+// This file is part of Moodle - https://moodle.org/
+//
+// Moodle is free software: you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation, either version 3 of the License, or
+// (at your option) any later version.
+//
+// Moodle is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU General Public License for more details.
+//
+// You should have received a copy of the GNU General Public License
+// along with Moodle.  If not, see <https://www.gnu.org/licenses/>.
 
+/**
+ * Tests for the external functionality.
+ *
+ * @package    local_satsmail
+ * @copyright  2026 South African Theological Seminary
+ * @license    https://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
 namespace local_satsmail;
 
 /**
+ * Tests for the external web service functions.
+ *
  * @covers \local_satsmail\external
  * @runTestsInSeparateProcesses
  */
@@ -68,6 +88,8 @@ final class external_test extends test\testcase {
                     'enabled' => true,
                 ],
             ],
+            'studentmaxrecipients' => 2,
+            'cccohortid' => 0,
         ];
         self::assertEquals($expected, $result);
 
@@ -99,7 +121,7 @@ final class external_test extends test\testcase {
         self::assertEquals(20, $result['maxfiles']);
         self::assertEquals(123000, $result['maxbytes']);
         self::assertEquals(5, $result['autosaveinterval']);
-        self::assertEquals(['starred', 'sent', 'drafts', 'trash'], $result['globaltrays']);
+        self::assertEquals(['starred', 'sent', 'drafts', 'archive', 'trash'], $result['globaltrays']);
         self::assertEquals('none', $result['coursetrays']);
         self::assertEquals('fullname', $result['coursetraysname']);
         self::assertEquals('fullname', $result['coursebadges']);
@@ -252,7 +274,7 @@ final class external_test extends test\testcase {
         foreach ($users as $user) {
             $this->setUser($user->id);
             $expected = [];
-            foreach (course::get_by_user($user) as $course) {
+            foreach (course::get_all_for_user($user) as $course) {
                 $search = new message_search($user);
                 $search->course = $course;
                 $search->roles = [message::ROLE_TO, message::ROLE_CC, message::ROLE_BCC];
@@ -583,6 +605,7 @@ final class external_test extends test\testcase {
         $user4 = new user($generator->create_user(['firstname' => 'David']));
         $user5 = new user($generator->create_user(['firstname' => 'Emma']));
         $user6 = new user($generator->create_user(['firstname' => 'Felix']));
+        $user7 = new user($generator->create_user(['firstname' => 'Grace']));
         $label1 = label::create($user1, 'Label 1');
         $label2 = label::create($user1, 'Label 2');
         $label3 = label::create($user2, 'Label 3');
@@ -751,7 +774,7 @@ final class external_test extends test\testcase {
 
         // User cannot view message.
 
-        self::setUser($user6->id);
+        self::setUser($user7->id);
         try {
             external::get_message($message2->id);
             self::fail();
@@ -1180,7 +1203,7 @@ final class external_test extends test\testcase {
         self::assertEquals(message::NOT_DELETED, message::get($message3->id)->deleted($user1));
         self::assertEquals(message::DELETED_FOREVER, message::get($message4->id)->deleted($user1));
         self::assertEquals(message::DELETED_FOREVER, message::get($message5->id)->deleted($user1));
-        self::assertEquals(message::DELETED, message::get($message6->id)->deleted($user1));
+        self::assertEquals(message::DELETED_FOREVER, message::get($message6->id)->deleted($user1));
         self::assert_record_count(0, 'messages', ['id' => $draft->id]);
         self::assert_message_event('\local_satsmail\event\draft_deleted', $draft, $eventsink);
 
@@ -1930,7 +1953,25 @@ final class external_test extends test\testcase {
         self::assertEqualsCanonicalizing([$user3, $user4], $draft->recipients(message::ROLE_CC));
         self::assertEqualsCanonicalizing([], $draft->recipients(message::ROLE_BCC));
 
-        // User cannot view message.
+        // User is not a recipient of the message.
+
+        $othercourse = new course($generator->create_course());
+        $generator->enrol_user($user1->id, $othercourse->id);
+        $generator->enrol_user($user3->id, $othercourse->id);
+        $data = message_data::new($othercourse, $user1);
+        $data->to = [$user3];
+        $data->subject = 'Subject';
+        $othermessage = message::create($data);
+        $othermessage->send($data->time);
+        try {
+            external::reply_message($othermessage->id, false);
+            self::fail();
+        } catch (exception $e) {
+            self::assertEquals('errormessagenotfound', $e->errorcode);
+            self::assertEquals($othermessage->id, $e->a);
+        }
+
+        // User cannot use mail in the course of the message.
 
         $course = new course($generator->create_course());
         $data = message_data::new($course, $user1);
@@ -1942,8 +1983,8 @@ final class external_test extends test\testcase {
             external::reply_message($message->id, false);
             self::fail();
         } catch (exception $e) {
-            self::assertEquals('errormessagenotfound', $e->errorcode);
-            self::assertEquals($message->id, $e->a);
+            self::assertEquals('errorcoursenotfound', $e->errorcode);
+            self::assertEquals($course->id, $e->a);
         }
 
         // Inexistent message.
@@ -1954,22 +1995,6 @@ final class external_test extends test\testcase {
         } catch (exception $e) {
             self::assertEquals('errormessagenotfound', $e->errorcode);
             self::assertEquals(123, $e->a);
-        }
-
-        // User not enrolled in course.
-
-        $course = new course($generator->create_course());
-        $data = message_data::new($course, $user1);
-        $data->to = [$user2];
-        $data->subject = 'Subject';
-        $message = message::create($data);
-        $message->send($data->time);
-        try {
-            external::reply_message($message->id, false);
-            self::fail();
-        } catch (exception $e) {
-            self::assertEquals('errormessagenotfound', $e->errorcode);
-            self::assertEquals($message->id, $e->a);
         }
     }
 
@@ -2050,7 +2075,25 @@ final class external_test extends test\testcase {
             self::assertEquals(123, $e->a);
         }
 
-        // User not enrolled in course.
+        // User is not a recipient of the message.
+
+        $othercourse = new course($generator->create_course());
+        $generator->enrol_user($user1->id, $othercourse->id);
+        $generator->enrol_user($user3->id, $othercourse->id);
+        $data = message_data::new($othercourse, $user1);
+        $data->to = [$user3];
+        $data->subject = 'Subject';
+        $othermessage = message::create($data);
+        $othermessage->send($data->time);
+        try {
+            external::forward_message($othermessage->id);
+            self::fail();
+        } catch (exception $e) {
+            self::assertEquals('errormessagenotfound', $e->errorcode);
+            self::assertEquals($othermessage->id, $e->a);
+        }
+
+        // User cannot use mail in the course of the message.
 
         $course = new course($generator->create_course());
         $data = message_data::new($course, $user1);
@@ -2062,8 +2105,8 @@ final class external_test extends test\testcase {
             external::forward_message($message->id);
             self::fail();
         } catch (exception $e) {
-            self::assertEquals('errormessagenotfound', $e->errorcode);
-            self::assertEquals($message->id, $e->a);
+            self::assertEquals('errorcoursenotfound', $e->errorcode);
+            self::assertEquals($course->id, $e->a);
         }
     }
 
@@ -2191,7 +2234,9 @@ final class external_test extends test\testcase {
         $user4 = new user($generator->create_user());
         $user5 = new user($generator->create_user());
         $user6 = new user($generator->create_user());
-        $generator->enrol_user($user1->id, $course->id);
+        // The sender needs the unlimitedrecipients capability to address more recipients
+        // than the student limit, which defaults to 2.
+        $generator->enrol_user($user1->id, $course->id, 'editingteacher');
         $generator->enrol_user($user2->id, $course->id);
         $generator->enrol_user($user3->id, $course->id);
         $generator->enrol_user($user4->id, $course->id);
@@ -2321,4 +2366,3 @@ final class external_test extends test\testcase {
         }
     }
 }
-

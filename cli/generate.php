@@ -1,8 +1,29 @@
 <?php
+// This file is part of Moodle - https://moodle.org/
+//
+// Moodle is free software: you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation, either version 3 of the License, or
+// (at your option) any later version.
+//
+// Moodle is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU General Public License for more details.
+//
+// You should have received a copy of the GNU General Public License
+// along with Moodle.  If not, see <https://www.gnu.org/licenses/>.
+
+/**
+ * CLI script that generates random messages for testing.
+ *
+ * @package    local_satsmail
+ * @copyright  2026 South African Theological Seminary
+ * @license    https://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
 /*
 South African Theological Seminaryy
  */
-
 namespace local_satsmail;
 
 define('CLI_SCRIPT', true);
@@ -11,49 +32,90 @@ require(__DIR__ . '/../../../config.php');
 require_once($CFG->dirroot . '/course/lib.php');
 require_once($CFG->libdir . '/clilib.php');
 
+/** @var array Emojis used in random text. */
 const EMOJIS = ['😀', '😛', '😱', '👍'];
+/** @var array Consonants used in random words. */
 const CONSONANTS = ['b', 'c', 'ç', 'd', 'f', 'g', 'h', 'j', 'k', 'l', 'm', 'n', 'p', 'q', 'r', 's', 't', 'v', 'x', 'y', 'z'];
+/** @var array Vowels used in random words. */
 const VOWELS = ['a', 'e', 'i', 'o', 'u'];
+/** @var int Maximum number of distinct random words. */
 const MAX_WORDS = 10000;
+/** @var int Maximum number of distinct random sentences. */
 const MAX_SENTENCES = 10000;
 
+/** @var float Frequency of emojis in random text. */
 const EMOJI_FREQ = 0.05;
+/** @var float Frequency of commas in random sentences. */
 const COMMA_FREQ = 0.1;
+/** @var float Frequency of question marks in random sentences. */
 const QUESTION_FREQ = 0.2;
+/** @var float Frequency of dashes in random sentences. */
 const DASH_FREQ = 0.1;
+/** @var float Expected number of syllables per random word. */
 const SYLLABES_PER_WORD_EX = 2;
+/** @var float Standard deviation of syllables per random word. */
 const SYLLABES_PER_WORD_SD = 0.5;
+/** @var float Expected number of words per random sentence. */
 const WORD_PER_SENTENCE_EX = 8;
+/** @var float Standard deviation of words per random sentence. */
 const WORD_PER_SENTENCE_SD = 3;
+/** @var float Expected number of sentences per random paragraph. */
 const SENTENCES_PER_PARAGRAPH_EX = 5;
+/** @var float Standard deviation of sentences per random paragraph. */
 const SENTENCES_PER_PARAGRAPH_SD = 3;
+/** @var float Expected number of paragraphs per random message. */
 const PARAGRAPHS_PER_MESSAGE_EX = 3;
+/** @var float Standard deviation of paragraphs per random message. */
 const PARAGRAPHS_PER_MESSAGE_SD = 1;
 
+/** @var int Default number of generated messages per user and course. */
 const MESSAGES_PER_USER_PER_COURSE = 25;
+/** @var float Expected number of generated labels per user. */
 const LABELS_PER_USER_EX = 3;
+/** @var float Standard deviation of generated labels per user. */
 const LABELS_PER_USER_SD = 2;
+/** @var float Frequency of replies among generated messages. */
 const REPLY_FREQ = 0.7;
+/** @var float Frequency of forwards among generated messages. */
 const FORWARD_FREQ = 0.1;
+/** @var float Frequency of drafts among generated messages. */
 const DRAFT_FREQ = 0.1;
+/** @var float Expected number of direct recipients per generated message. */
 const TO_RECIPIENTS_EX = 1;
+/** @var float Standard deviation of direct recipients per generated message. */
 const TO_RECIPIENTS_SD = 2;
+/** @var float Expected number of carbon copy recipients per generated message. */
 const CC_RECIPIENTS_EX = 0;
+/** @var float Standard deviation of carbon copy recipients per generated message. */
 const CC_RECIPIENTS_SD = 2;
+/** @var float Expected number of blind carbon copy recipients per generated message. */
 const BCC_RECIPIENTS_EX = -10;
+/** @var float Standard deviation of blind carbon copy recipients per generated message. */
 const BCC_RECIPIENTS_SD = 10;
+/** @var float Expected number of attachments per generated message. */
 const ATTACHMENTS_EX = -1;
+/** @var float Standard deviation of attachments per generated message. */
 const ATTACHMENTS_SD = 1;
+/** @var float Frequency of reply-to-all among generated replies. */
 const REPLY_ALL_FREQ = 0.5;
+/** @var float Exponent of the frequency of unread generated messages. */
 const UNREAD_FREQ_EXP = 4;
+/** @var float Frequency of starred generated messages. */
 const STARRED_FREQ = 0.2;
+/** @var float Frequency of deleted generated messages. */
 const DELETED_FREQ = 0.1;
+/** @var float Frequency of generated messages with deleted content. */
 const DELETED_CONTENT_FREQ = 0.05;
+/** @var float Expected number of labels per generated message. */
 const MESSAGE_LABEL_EX = 0;
+/** @var float Standard deviation of labels per generated message. */
 const MESSAGE_LABEL_SD = 1;
 
 set_debugging(DEBUG_DEVELOPER, true);
 
+/**
+ * Generates random courses, messages and labels.
+ */
 function main() {
     global $CFG, $DB;
 
@@ -106,6 +168,11 @@ function main() {
     cli_writeln("\n\nFinished in $seconds seconds.");
 }
 
+/**
+ * Deletes all the messages of the given courses.
+ *
+ * @param array $courses Courses to delete messages from.
+ */
 function delete_messages(array $courses) {
     global $DB;
 
@@ -116,6 +183,12 @@ function delete_messages(array $courses) {
     }
 }
 
+/**
+ * Adds a random number of attachments to a message.
+ *
+ * @param \file_storage $fs File storage.
+ * @param message_data $data Data of the message.
+ */
 function add_random_attachments(\file_storage $fs, message_data $data) {
     global $USER;
 
@@ -147,6 +220,12 @@ function add_random_attachments(\file_storage $fs, message_data $data) {
     }
 }
 
+/**
+ * Adds a random set of recipients to a message.
+ *
+ * @param message_data $data Data of the message.
+ * @param array $users Users that can be added as recipients.
+ */
 function add_random_recipients(message_data $data, array $users): void {
     $counts = new \stdClass();
     $maxcount = count($users) - 1;
@@ -175,6 +254,14 @@ function add_random_recipients(message_data $data, array $users): void {
     }
 }
 
+/**
+ * Generates random messages in a course.
+ *
+ * @param \file_storage $fs File storage.
+ * @param course $course Course to generate messages in.
+ * @param ?user $admin Admin user, if messages are also sent by the admin.
+ * @param int $countperuser Number of messages generated per user.
+ */
 function generate_course_messages(\file_storage $fs, course $course, ?user $admin, int $countperuser): void {
     global $DB;
 
@@ -220,6 +307,15 @@ function generate_course_messages(\file_storage $fs, course $course, ?user $admi
     }
 }
 
+/**
+ * Generates the data of a random forward of a message.
+ *
+ * @param \file_storage $fs File storage.
+ * @param message $message Message to forward.
+ * @param array $users Users that can be added as recipients.
+ * @param int $time Time of the forward.
+ * @return message_data Data of the generated forward.
+ */
 function generate_random_forward(\file_storage $fs, message $message, array $users, int $time): message_data {
     $sender = random_item($message->recipients(message::ROLE_TO, message::ROLE_CC));
     $data = message_data::forward($message, $sender);
@@ -230,6 +326,15 @@ function generate_random_forward(\file_storage $fs, message $message, array $use
     return $data;
 }
 
+/**
+ * Generates the data of a random message in a course.
+ *
+ * @param \file_storage $fs File storage.
+ * @param course $course Course of the message.
+ * @param array $users Users that can be added as recipients.
+ * @param int $time Time of the message.
+ * @return message_data Data of the generated message.
+ */
 function generate_random_message(\file_storage $fs, course $course, array $users, int $time): message_data {
     $sender = random_item($users);
     $data = message_data::new($course, $sender);
@@ -243,6 +348,14 @@ function generate_random_message(\file_storage $fs, course $course, array $users
     return $data;
 }
 
+/**
+ * Generates the data of a random reply to a message.
+ *
+ * @param \file_storage $fs File storage.
+ * @param message $message Message to reply to.
+ * @param int $time Time of the reply.
+ * @return message_data Data of the generated reply.
+ */
 function generate_random_reply(\file_storage $fs, message $message, int $time): message_data {
     $sender = random_item($message->recipients(message::ROLE_TO, message::ROLE_CC));
     $all = random_bool(REPLY_ALL_FREQ);
@@ -255,6 +368,9 @@ function generate_random_reply(\file_storage $fs, message $message, int $time): 
     return $data;
 }
 
+/**
+ * Generates random labels for all the users of the site.
+ */
 function generate_user_labels() {
     global $CFG, $DB;
 
@@ -276,6 +392,12 @@ function generate_user_labels() {
     }
 }
 
+/**
+ * Prints the progress of the generation.
+ *
+ * @param string $message Message to print.
+ * @param int $total Total number of steps.
+ */
 function print_progress(string $message = '', int $total = 0) {
     static $prevmessage = '';
     static $value = 0;
@@ -302,10 +424,21 @@ function print_progress(string $message = '', int $total = 0) {
     }
 }
 
+/**
+ * Returns a random boolean with the given frequency of true values.
+ *
+ * @param float $truefreq Frequency of true values, between 0 and 1.
+ * @return bool Random boolean.
+ */
 function random_bool(float $truefreq): bool {
     return rand() / getrandmax() < $truefreq;
 }
 
+/**
+ * Returns random HTML content for a message.
+ *
+ * @return string Random content.
+ */
 function random_content(): string {
     $s = '';
     $n = random_count(1, PARAGRAPHS_PER_MESSAGE_EX, PARAGRAPHS_PER_MESSAGE_SD);
@@ -315,6 +448,14 @@ function random_content(): string {
     return $s;
 }
 
+/**
+ * Returns a random count with the given normal distribution.
+ *
+ * @param int $min Minimum value.
+ * @param float $ex Expected value.
+ * @param float $sd Standard deviation.
+ * @return int Random count.
+ */
 function random_count(int $min, float $ex, float $sd): int {
     $x = rand() / getrandmax();
     $y = rand() / getrandmax();
@@ -322,10 +463,21 @@ function random_count(int $min, float $ex, float $sd): int {
     return max($min, (int) round($r));
 }
 
+/**
+ * Returns a random item of an array.
+ *
+ * @param array $items Items to choose from.
+ * @return mixed Random item.
+ */
 function random_item(array $items) {
     return $items[array_rand($items)];
 }
 
+/**
+ * Returns a random paragraph of text.
+ *
+ * @return string Random paragraph.
+ */
 function random_paragraph(): string {
     $s = '<p>' . random_sentence(true);
     $n = random_count(1, SENTENCES_PER_PARAGRAPH_EX, SENTENCES_PER_PARAGRAPH_SD) - 1;
@@ -336,6 +488,12 @@ function random_paragraph(): string {
     return $s;
 }
 
+/**
+ * Returns a random sentence of text.
+ *
+ * @param bool $period Terminate the sentence with a period.
+ * @return string Random sentence.
+ */
 function random_sentence($period = false): string {
     if (random_bool(EMOJI_FREQ)) {
         return random_item(EMOJIS);
@@ -369,6 +527,12 @@ function random_sentence($period = false): string {
     return $s;
 }
 
+/**
+ * Returns a random word.
+ *
+ * @param bool $capitalize Capitalize the first letter of the word.
+ * @return string Random word.
+ */
 function random_word($capitalize = false): string {
     static $words = [];
 
@@ -396,6 +560,11 @@ function random_word($capitalize = false): string {
     return $s;
 }
 
+/**
+ * Sets a random deleted status for the users of a message.
+ *
+ * @param message $message Message to update.
+ */
 function set_random_deleted(message $message): void {
     if (!$message->draft) {
         if (random_bool(DELETED_FREQ)) {
@@ -412,6 +581,11 @@ function set_random_deleted(message $message): void {
     }
 }
 
+/**
+ * Sets random labels for the users of a message.
+ *
+ * @param message $message Message to update.
+ */
 function set_random_labels(message $message): void {
     $users = array_merge([$message->sender()], $message->recipients());
     foreach ($users as $user) {
@@ -424,6 +598,11 @@ function set_random_labels(message $message): void {
     }
 }
 
+/**
+ * Sets a random starred status for the users of a message.
+ *
+ * @param message $message Message to update.
+ */
 function set_random_starred(message $message): void {
     $message->set_starred($message->sender(), random_bool(STARRED_FREQ));
     if (!$message->draft) {
@@ -433,6 +612,13 @@ function set_random_starred(message $message): void {
     }
 }
 
+/**
+ * Sets a random unread status and time for the users of a message.
+ *
+ * @param message $message Message to update.
+ * @param int $starttime Start of the time range.
+ * @param int $endtime End of the time range.
+ */
 function set_random_unread(message $message, int $starttime, int $endtime): void {
     if (!$message->draft) {
         $freq = pow(($message->time - $starttime) / ($endtime - $starttime), UNREAD_FREQ_EXP);
@@ -443,4 +629,3 @@ function set_random_unread(message $message, int $starttime, int $endtime): void
 }
 
 main();
-

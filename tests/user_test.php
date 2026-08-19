@@ -1,11 +1,31 @@
 <?php
-/*
-South African Theological Seminary
- */
+// This file is part of Moodle - https://moodle.org/
+//
+// Moodle is free software: you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation, either version 3 of the License, or
+// (at your option) any later version.
+//
+// Moodle is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU General Public License for more details.
+//
+// You should have received a copy of the GNU General Public License
+// along with Moodle.  If not, see <https://www.gnu.org/licenses/>.
 
+/**
+ * Tests for the user functionality.
+ *
+ * @package    local_satsmail
+ * @copyright  2026 South African Theological Seminary
+ * @license    https://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
 namespace local_satsmail;
 
 /**
+ * Tests for the user class.
+ *
  * @covers \local_satsmail\user
  */
 final class user_test extends test\testcase {
@@ -44,7 +64,7 @@ final class user_test extends test\testcase {
 
         self::assertTrue($user1->can_view_files($message1));
         self::assertTrue($user2->can_view_files($message1));
-        self::assertFalse($user3->can_view_files($message1));
+        self::assertTrue($user3->can_view_files($message1));
         self::assertFalse($user4->can_view_files($message1));
 
         // Deleted message.
@@ -225,7 +245,7 @@ final class user_test extends test\testcase {
         $message1->send($time);
         self::assertTrue($user1->can_view_message($message1));
         self::assertTrue($user2->can_view_message($message1));
-        self::assertFalse($user3->can_view_message($message1));
+        self::assertTrue($user3->can_view_message($message1));
         self::assertFalse($user4->can_view_message($message1));
 
         // Deleted message.
@@ -235,7 +255,8 @@ final class user_test extends test\testcase {
         self::assertFalse($user1->can_view_message($message1));
         self::assertFalse($user2->can_view_message($message1));
 
-        // Sent message in hidden course.
+        // Sent message in hidden course: read access follows message participation,
+        // so the sender and the recipients can still view it.
 
         $data = message_data::new($course2, $user1);
         $data->subject = 'Subject';
@@ -243,9 +264,10 @@ final class user_test extends test\testcase {
         $data->time = $time;
         $message2 = message::create($data);
         $message2->send($time);
-        self::assertFalse($user1->can_view_message($message2));
-        self::assertTrue($user2->can_view_message($message2)); // Teacher.
-        self::assertTrue($user3->can_view_message($message2)); // Site administrator.
+        self::assertTrue($user1->can_view_message($message2)); // Sender.
+        self::assertTrue($user2->can_view_message($message2)); // Recipient.
+        self::assertTrue($user3->can_view_message($message2)); // Recipient.
+        self::assertFalse($user4->can_view_message($message2)); // Not a participant.
     }
 
     public function test_current(): void {
@@ -389,4 +411,3 @@ final class user_test extends test\testcase {
         self::assertEquals(sprintf("0\nBecker\nLena\n%010d", $user->id), $user->sortorder());
     }
 }
-

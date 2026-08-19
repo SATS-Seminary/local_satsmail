@@ -1,11 +1,31 @@
 <?php
-/*
-South African Theological Seminary
- */
+// This file is part of Moodle - https://moodle.org/
+//
+// Moodle is free software: you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation, either version 3 of the License, or
+// (at your option) any later version.
+//
+// Moodle is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU General Public License for more details.
+//
+// You should have received a copy of the GNU General Public License
+// along with Moodle.  If not, see <https://www.gnu.org/licenses/>.
 
+/**
+ * Tests for the lib functionality.
+ *
+ * @package    local_satsmail
+ * @copyright  2026 South African Theological Seminary
+ * @license    https://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
 namespace local_satsmail;
 
 /**
+ * Tests for the plugin callbacks.
+ *
  * @covers \local_satsmail_pluginfile
  * @covers \local_satsmail_render_navbar_output
  * @runTestsInSeparateProcesses
@@ -90,6 +110,8 @@ final class lib_test extends test\testcase {
         $course2 = new course($generator->create_course());
         $user1 = new user($generator->create_user());
         $user2 = new user($generator->create_user());
+        // Not enrolled anywhere and not a participant of any message.
+        $user3 = new user($generator->create_user());
         $label1 = label::create($user1, 'Label 1');
         $label2 = label::create($user1, 'Label 2');
         $generator->enrol_user($user1->id, $course1->id);
@@ -136,6 +158,7 @@ final class lib_test extends test\testcase {
             'settings' => (array) settings::get(),
             'strings' => output\strings::get_many([
                 'allcourses',
+                'archived',
                 'bcc',
                 'cc',
                 'changecourse',
@@ -157,13 +180,14 @@ final class lib_test extends test\testcase {
         ]));
         self::assertStringContainsString($expected, $result);
 
-        // User has no courses.
+        // User has no courses: the mail icon is still displayed, with no courses in its data.
 
-        self::setUser($user2->id);
+        self::setUser($user3->id);
 
         $result = local_satsmail_render_navbar_output($output);
 
-        self::assertEquals('', $result);
+        self::assertStringContainsString('<div class="popover-region" id="local-satsmail-navbar">', $result);
+        self::assertStringContainsString('"courses":[]', $result);
 
         // User not logged in.
 
@@ -183,4 +207,3 @@ final class lib_test extends test\testcase {
         self::assertEquals('', $result);
     }
 }
-

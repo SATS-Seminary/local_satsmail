@@ -1,8 +1,26 @@
 <?php
-/*
-South African Theological Seminary
- */
+// This file is part of Moodle - https://moodle.org/
+//
+// Moodle is free software: you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation, either version 3 of the License, or
+// (at your option) any later version.
+//
+// Moodle is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU General Public License for more details.
+//
+// You should have received a copy of the GNU General Public License
+// along with Moodle.  If not, see <https://www.gnu.org/licenses/>.
 
+/**
+ * Privacy API implementation.
+ *
+ * @package    local_satsmail
+ * @copyright  2026 South African Theological Seminary
+ * @license    https://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
 namespace local_satsmail\privacy;
 
 use core_privacy\local\metadata\collection;
@@ -20,12 +38,20 @@ use local_satsmail\output\strings;
 /**
  * Implementation of the privacy subsystem plugin provider for local mail.
  */
+/**
+ * Privacy API implementation for the plugin.
+ */
 class provider implements
     \core_privacy\local\metadata\provider,
-    \core_privacy\local\request\plugin\provider,
     \core_privacy\local\request\core_userlist_provider,
+    \core_privacy\local\request\plugin\provider,
     \core_privacy\local\request\user_preference_provider {
-
+    /**
+     * Returns metadata about the data stored by the plugin.
+     *
+     * @param collection $collection The initialised collection to add items to.
+     * @return collection A listing of user data stored through this system.
+     */
     public static function get_metadata(collection $collection): collection {
         $collection->add_database_table('local_satsmail_labels', [
             'userid' => 'privacy:metadata:local_satsmail_labels:userid',
@@ -55,6 +81,7 @@ class provider implements
             'unread' => 'privacy:metadata:local_satsmail_message_labels:unread',
             'starred' => 'privacy:metadata:local_satsmail_message_labels:starred',
             'deleted' => 'privacy:metadata:local_satsmail_message_labels:deleted',
+            'archived' => 'privacy:metadata:local_satsmail_message_labels:archived',
         ], 'privacy:metadata:local_satsmail_message_labels');
 
         $collection->add_database_table('local_satsmail_message_refs', [
@@ -72,6 +99,7 @@ class provider implements
             'unread' => 'privacy:metadata:local_satsmail_message_users:unread',
             'starred' => 'privacy:metadata:local_satsmail_message_users:starred',
             'deleted' => 'privacy:metadata:local_satsmail_message_users:deleted',
+            'archived' => 'privacy:metadata:local_satsmail_message_users:archived',
         ], 'privacy:metadata:local_satsmail_message_users');
 
         $collection->add_subsystem_link('core_files', [], 'privacy:metadata:core_files');
@@ -82,6 +110,12 @@ class provider implements
         return $collection;
     }
 
+    /**
+     * Returns the list of contexts that contain user information for the given user.
+     *
+     * @param int $userid The user to search.
+     * @return contextlist The contexts containing user information.
+     */
     public static function get_contexts_for_userid(int $userid): contextlist {
         global $DB;
 
@@ -113,6 +147,11 @@ class provider implements
         return $contextlist;
     }
 
+    /**
+     * Adds the list of users who have data within a context to the given userlist.
+     *
+     * @param userlist $userlist The userlist containing the list of users who have data in this context.
+     */
     public static function get_users_in_context(userlist $userlist): void {
         global $DB;
 
@@ -139,6 +178,11 @@ class provider implements
         $userlist->add_from_sql('userid', $sql, $params);
     }
 
+    /**
+     * Exports all user data for the specified user in the given contexts.
+     *
+     * @param approved_contextlist $contextlist The approved contexts to export information for.
+     */
     public static function export_user_data(approved_contextlist $contextlist): void {
         global $DB;
 
@@ -163,7 +207,13 @@ class provider implements
             $writer = writer::with_context($context);
             foreach (self::iterate_messages($user, $context->instanceid) as $message) {
                 $subcontext = [strings::get('pluginname'), strings::get('messages'), $message->id];
-                $content = $writer->rewrite_pluginfile_urls($subcontext, 'local_satsmail', 'message', $message->id, $message->content);
+                $content = $writer->rewrite_pluginfile_urls(
+                    $subcontext,
+                    'local_satsmail',
+                    'message',
+                    $message->id,
+                    $message->content
+                );
                 $content = format_text($content, $message->format, ['context' => $context, 'filter' => true, 'para' => false]);
                 $sender = $message->sender();
                 $data = [
@@ -196,6 +246,11 @@ class provider implements
         }
     }
 
+    /**
+     * Exports all user preferences of the plugin for the given user.
+     *
+     * @param int $userid The user to export preferences for.
+     */
     public static function export_user_preferences(int $userid): void {
         $perpage = get_user_preferences('local_satsmail_mailsperpage', null, $userid);
         if ($perpage !== null) {
@@ -218,12 +273,22 @@ class provider implements
         }
     }
 
+    /**
+     * Deletes all data for all users in the specified context.
+     *
+     * @param \context $context The context to delete data for.
+     */
     public static function delete_data_for_all_users_in_context(\context $context): void {
         if ($context->contextlevel == CONTEXT_COURSE) {
             message::delete_course_data($context->get_course_context());
         }
     }
 
+    /**
+     * Deletes all data for the given user in the approved contexts.
+     *
+     * @param approved_contextlist $contextlist The approved contexts and user information to delete.
+     */
     public static function delete_data_for_user(approved_contextlist $contextlist): void {
         $user = new user($contextlist->get_user());
         foreach ($contextlist->get_contexts() as $context) {
@@ -243,6 +308,11 @@ class provider implements
         }
     }
 
+    /**
+     * Deletes multiple users within a single context.
+     *
+     * @param approved_userlist $userlist The approved context and user information to delete.
+     */
     public static function delete_data_for_users(approved_userlist $userlist): void {
         foreach ($userlist->get_users() as $user) {
             $contextid = $userlist->get_context()->id;
@@ -250,6 +320,13 @@ class provider implements
         }
     }
 
+    /**
+     * Iterates over the messages of a user in a course.
+     *
+     * @param user $user User to iterate messages for.
+     * @param int $courseid ID of the course.
+     * @return \Traversable Iterator over the messages of the user in the course.
+     */
     private static function iterate_messages(user $user, int $courseid): \Traversable {
         global $DB;
 
@@ -285,4 +362,3 @@ class provider implements
         }
     }
 }
-

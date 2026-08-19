@@ -1,8 +1,26 @@
 <?php
-/*
-South African Theological Seminary
- */
+// This file is part of Moodle - https://moodle.org/
+//
+// Moodle is free software: you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation, either version 3 of the License, or
+// (at your option) any later version.
+//
+// Moodle is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU General Public License for more details.
+//
+// You should have received a copy of the GNU General Public License
+// along with Moodle.  If not, see <https://www.gnu.org/licenses/>.
 
+/**
+ * Base test case of the plugin.
+ *
+ * @package    local_satsmail
+ * @copyright  2026 South African Theological Seminary
+ * @license    https://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
 namespace local_satsmail\test;
 
 use local_satsmail\course;
@@ -14,7 +32,13 @@ use local_satsmail\user;
 use local_satsmail\user_search;
 use local_satsmail\output\strings;
 
+/**
+ * Base test case of the plugin.
+ */
 abstract class testcase extends \advanced_testcase {
+    /**
+     * Sets up the test case.
+     */
     public function setUp(): void {
         $this->resetAfterTest();
         $this->preventResetByRollback();
@@ -28,6 +52,7 @@ abstract class testcase extends \advanced_testcase {
      *
      * @param mixed[] $expected Expected array of objects in the given order.
      * @param mixed[] $actual Actual array.
+     * @param string $message Message to display on failure.
      * @throws \PHPUnit\Framework\ExpectationFailedException
      */
     protected static function assert_array_of_objects(array $expected, array $actual, string $message = '') {
@@ -63,9 +88,6 @@ abstract class testcase extends \advanced_testcase {
      *
      * @param string[] $expected Files: filename => content.
      * @param message $message Message.
-     * @param string $component Component.
-     * @param string $filearea File area.
-     * @param string $itemid Item ID.
      * @throws \PHPUnit\Framework\ExpectationFailedException
      */
     protected static function assert_attachments(array $expected, message $message) {
@@ -83,7 +105,7 @@ abstract class testcase extends \advanced_testcase {
      * Asserts stored files.
      *
      * @param string[] $expected Files: filename => content.
-     * @param int $userid Draft item ID.
+     * @param int $draftitemid Draft item ID.
      * @throws \PHPUnit\Framework\ExpectationFailedException
      */
     protected static function assert_draft_files(array $expected, int $draftitemid) {
@@ -711,4 +733,3 @@ abstract class testcase extends \advanced_testcase {
         return rand() / getrandmax() < $truefreq;
     }
 }
-

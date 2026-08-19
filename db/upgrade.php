@@ -1,8 +1,33 @@
 <?php
-/*
-South African Theological Seminary
+// This file is part of Moodle - https://moodle.org/
+//
+// Moodle is free software: you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation, either version 3 of the License, or
+// (at your option) any later version.
+//
+// Moodle is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU General Public License for more details.
+//
+// You should have received a copy of the GNU General Public License
+// along with Moodle.  If not, see <https://www.gnu.org/licenses/>.
+
+/**
+ * Upgrade code.
+ *
+ * @package    local_satsmail
+ * @copyright  2026 South African Theological Seminary
+ * @license    https://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
+/**
+ * Upgrades the plugin database.
+ *
+ * @param int $oldversion Version the plugin is upgraded from.
+ * @return bool True on success.
+ */
 function xmldb_local_satsmail_upgrade($oldversion) {
     global $DB;
 
@@ -13,7 +38,7 @@ function xmldb_local_satsmail_upgrade($oldversion) {
         $params = ['name' => 'local_satsmail_fullmessage'];
         $DB->execute('DELETE FROM {user_preferences} WHERE name = :name', $params);
 
-        upgrade_plugin_savepoint(true, 2015121400, 'local', 'mail');
+        upgrade_plugin_savepoint(true, 2015121400, 'local', 'satsmail');
     }
 
     if ($oldversion < 2016070100) {
@@ -27,7 +52,7 @@ function xmldb_local_satsmail_upgrade($oldversion) {
         }
 
         // Mail savepoint reached.
-        upgrade_plugin_savepoint(true, 2016070100, 'local', 'mail');
+        upgrade_plugin_savepoint(true, 2016070100, 'local', 'satsmail');
     }
 
     if ($oldversion < 2016070101) {
@@ -50,7 +75,7 @@ function xmldb_local_satsmail_upgrade($oldversion) {
         $rs->close();
 
         // Mail savepoint reached.
-        upgrade_plugin_savepoint(true, 2016070101, 'local', 'mail');
+        upgrade_plugin_savepoint(true, 2016070101, 'local', 'satsmail');
     }
 
     if ($oldversion < 2016070103) {
@@ -60,7 +85,7 @@ function xmldb_local_satsmail_upgrade($oldversion) {
         unset_config('cronstop', 'local_satsmail');
         unset_config('cronduration', 'local_satsmail');
 
-        upgrade_plugin_savepoint(true, 2016070103, 'local', 'mail');
+        upgrade_plugin_savepoint(true, 2016070103, 'local', 'satsmail');
     }
 
     if ($oldversion < 2017070400) {
@@ -74,7 +99,7 @@ function xmldb_local_satsmail_upgrade($oldversion) {
         }
 
         // Mail savepoint reached.
-        upgrade_plugin_savepoint(true, 2017070400, 'local', 'mail');
+        upgrade_plugin_savepoint(true, 2017070400, 'local', 'satsmail');
     }
 
     if ($oldversion < 2017070401) {
@@ -88,7 +113,7 @@ function xmldb_local_satsmail_upgrade($oldversion) {
         }
 
         // Mail savepoint reached.
-        upgrade_plugin_savepoint(true, 2017070401, 'local', 'mail');
+        upgrade_plugin_savepoint(true, 2017070401, 'local', 'satsmail');
     }
 
     if ($oldversion < 2017070402) {
@@ -113,7 +138,7 @@ function xmldb_local_satsmail_upgrade($oldversion) {
             }
         }
 
-        upgrade_plugin_savepoint(true, 2017070402, 'local', 'mail');
+        upgrade_plugin_savepoint(true, 2017070402, 'local', 'satsmail');
     }
 
     // Version 2.0.
@@ -145,7 +170,7 @@ function xmldb_local_satsmail_upgrade($oldversion) {
         $field = new xmldb_field('role', XMLDB_TYPE_INTEGER, '1', null, XMLDB_NOTNULL, null, null, 'userid');
         $dbman->change_field_default($table, $field);
 
-        upgrade_plugin_savepoint(true, 2023060700, 'local', 'mail');
+        upgrade_plugin_savepoint(true, 2023060700, 'local', 'satsmail');
     }
 
     if ($oldversion < 2023060701) {
@@ -157,7 +182,7 @@ function xmldb_local_satsmail_upgrade($oldversion) {
             $dbman->drop_field($table, $field);
         }
 
-        upgrade_plugin_savepoint(true, 2023060701, 'local', 'mail');
+        upgrade_plugin_savepoint(true, 2023060701, 'local', 'satsmail');
     }
 
     // Add redundant courseid, draft and time fields to local_satsmail_message_users.
@@ -203,7 +228,7 @@ function xmldb_local_satsmail_upgrade($oldversion) {
         $field = new xmldb_field('time', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, null, null, 'draft');
         $dbman->change_field_default($table, $field);
 
-        upgrade_plugin_savepoint(true, 2023060702, 'local', 'mail');
+        upgrade_plugin_savepoint(true, 2023060702, 'local', 'satsmail');
     }
 
     // Add redundant courseid, draft, time, role, unread, starred and deleted fields to local_satsmail_message_labels.
@@ -300,7 +325,7 @@ function xmldb_local_satsmail_upgrade($oldversion) {
         $field = new xmldb_field('deleted', XMLDB_TYPE_INTEGER, '1', null, XMLDB_NOTNULL, null, null, 'starred');
         $dbman->change_field_default($table, $field);
 
-        upgrade_plugin_savepoint(true, 2023060704, 'local', 'mail');
+        upgrade_plugin_savepoint(true, 2023060704, 'local', 'satsmail');
     }
 
     // Add new indexes to local_satsmail_message_users and local_satsmail_message_labels.
@@ -334,7 +359,7 @@ function xmldb_local_satsmail_upgrade($oldversion) {
             $dbman->add_index($table, $index);
         }
 
-        upgrade_plugin_savepoint(true, 2023060705, 'local', 'mail');
+        upgrade_plugin_savepoint(true, 2023060705, 'local', 'satsmail');
     }
 
     // Drop local_satsmail_index table.
@@ -346,7 +371,7 @@ function xmldb_local_satsmail_upgrade($oldversion) {
             $dbman->drop_table($table);
         }
 
-        upgrade_plugin_savepoint(true, 2023092200, 'local', 'mail');
+        upgrade_plugin_savepoint(true, 2023092200, 'local', 'satsmail');
     }
 
     // Remove references to messages from different courses.
@@ -363,7 +388,7 @@ function xmldb_local_satsmail_upgrade($oldversion) {
         }
         $rs->close();
 
-        upgrade_plugin_savepoint(true, 2024030500, 'local', 'mail');
+        upgrade_plugin_savepoint(true, 2024030500, 'local', 'satsmail');
     }
 
     // Disable web notifications by default.
@@ -373,6 +398,8 @@ function xmldb_local_satsmail_upgrade($oldversion) {
         $processors = array_filter($processors, fn($processor) => $processor !== 'popup');
         set_config('message_provider_local_satsmail_mail_enabled', implode(',', $processors), 'message');
         set_config('popup_provider_local_satsmail_mail_locked', '1', 'message');
+
+        upgrade_plugin_savepoint(true, 2024031400, 'local', 'satsmail');
     }
 
     // Add archived field to local_satsmail_message_users.
@@ -487,4 +514,3 @@ function xmldb_local_satsmail_upgrade($oldversion) {
 
     return true;
 }
-

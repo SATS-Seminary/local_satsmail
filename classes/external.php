@@ -1,8 +1,26 @@
 <?php
-/*
-South African Theological Seminary
- */
+// This file is part of Moodle - https://moodle.org/
+//
+// Moodle is free software: you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation, either version 3 of the License, or
+// (at your option) any later version.
+//
+// Moodle is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU General Public License for more details.
+//
+// You should have received a copy of the GNU General Public License
+// along with Moodle.  If not, see <https://www.gnu.org/licenses/>.
 
+/**
+ * External web service functions.
+ *
+ * @package    local_satsmail
+ * @copyright  2026 South African Theological Seminary
+ * @license    https://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
 namespace local_satsmail;
 
 use core_external\external_api;
@@ -13,19 +31,35 @@ use core_external\external_single_structure;
 use core_external\external_value;
 use core_external\util as external_util;
 
-defined('MOODLE_INTERNAL') || die;
-
+/**
+ * External web service functions of the plugin.
+ */
 class external extends external_api {
+    /**
+     * Returns the description of the parameters of the local_satsmail_get_settings external function.
+     *
+     * @return external_function_parameters Parameter description.
+     */
     public static function get_settings_parameters() {
         return new external_function_parameters([]);
     }
 
+    /**
+     * Returns the site settings of the plugin.
+     *
+     * @return array Result of the external function.
+     */
     public static function get_settings() {
         self::validate_call(self::get_settings_parameters(), func_get_args());
 
         return (array) settings::get();
     }
 
+    /**
+     * Returns the description of the return value of the local_satsmail_get_settings external function.
+     *
+     * @return external_description Return value description.
+     */
     public static function get_settings_returns() {
         return new external_single_structure([
             'enablebackup' => new external_value(
@@ -107,16 +141,31 @@ class external extends external_api {
         ]);
     }
 
+    /**
+     * Returns the description of the parameters of the local_satsmail_get_strings external function.
+     *
+     * @return external_function_parameters Parameter description.
+     */
     public static function get_strings_parameters() {
         return new external_function_parameters([]);
     }
 
+    /**
+     * Returns the language strings used by the user interface.
+     *
+     * @return array Result of the external function.
+     */
     public static function get_strings() {
         self::validate_call(self::get_strings_parameters(), func_get_args());
 
         return output\strings::get_all();
     }
 
+    /**
+     * Returns the description of the return value of the local_satsmail_get_strings external function.
+     *
+     * @return external_description Return value description.
+     */
     public static function get_strings_returns() {
         $stringkeys = [];
         foreach (output\strings::get_ids() as $id) {
@@ -125,16 +174,31 @@ class external extends external_api {
         return new external_single_structure($stringkeys);
     }
 
+    /**
+     * Returns the description of the parameters of the local_satsmail_get_preferences external function.
+     *
+     * @return external_function_parameters Parameter description.
+     */
     public static function get_preferences_parameters() {
         return new external_function_parameters([]);
     }
 
+    /**
+     * Returns the mail preferences of the current user.
+     *
+     * @return array Result of the external function.
+     */
     public static function get_preferences() {
         self::validate_call(self::get_preferences_parameters(), func_get_args());
 
         return self::get_preferences_raw();
     }
 
+    /**
+     * Returns the mail preferences of the current user, without validating the call.
+     *
+     * @return array Result of the external function.
+     */
     public static function get_preferences_raw() {
         $result = [
             'perpage' => max(5, min(100, (int) get_user_preferences('local_satsmail_mailsperpage', 10))),
@@ -156,6 +220,11 @@ class external extends external_api {
         return $result;
     }
 
+    /**
+     * Returns the description of the return value of the local_satsmail_get_preferences external function.
+     *
+     * @return external_description Return value description.
+     */
     public static function get_preferences_returns() {
         return new external_single_structure([
             'perpage' => new external_value(PARAM_INT, 'Number of messages to display per page (5-100)'),
@@ -166,6 +235,11 @@ class external extends external_api {
         ]);
     }
 
+    /**
+     * Returns the description of the parameters of the local_satsmail_set_preferences external function.
+     *
+     * @return external_function_parameters Parameter description.
+     */
     public static function set_preferences_parameters() {
         return new external_function_parameters([
             'preferences' => new external_single_structure([
@@ -188,6 +262,9 @@ class external extends external_api {
         ]);
     }
 
+    /**
+     * Sets the mail preferences of the current user.
+     */
     public static function set_preferences() {
         $params = self::validate_call(self::set_preferences_parameters(), func_get_args());
 
@@ -217,20 +294,40 @@ class external extends external_api {
         return null;
     }
 
+    /**
+     * Returns the description of the return value of the local_satsmail_set_preferences external function.
+     *
+     * @return external_description Return value description.
+     */
     public static function set_preferences_returns() {
         return null;
     }
 
+    /**
+     * Returns the description of the parameters of the local_satsmail_get_courses external function.
+     *
+     * @return external_function_parameters Parameter description.
+     */
     public static function get_courses_parameters() {
         return new external_function_parameters([]);
     }
 
+    /**
+     * Returns the courses of the current user.
+     *
+     * @return array Result of the external function.
+     */
     public static function get_courses() {
         self::validate_call(self::get_courses_parameters(), func_get_args());
 
         return self::get_courses_raw();
     }
 
+    /**
+     * Returns the courses of the current user, without validating the call.
+     *
+     * @return array Result of the external function.
+     */
     public static function get_courses_raw() {
         $user = user::current();
         $courses = course::get_all_for_user($user);
@@ -269,6 +366,11 @@ class external extends external_api {
         return $result;
     }
 
+    /**
+     * Returns the description of the return value of the local_satsmail_get_courses external function.
+     *
+     * @return external_description Return value description.
+     */
     public static function get_courses_returns() {
         return new external_multiple_structure(
             new external_single_structure([
@@ -286,16 +388,31 @@ class external extends external_api {
         );
     }
 
+    /**
+     * Returns the description of the parameters of the local_satsmail_get_labels external function.
+     *
+     * @return external_function_parameters Parameter description.
+     */
     public static function get_labels_parameters() {
         return new external_function_parameters([]);
     }
 
+    /**
+     * Returns the labels of the current user.
+     *
+     * @return array Result of the external function.
+     */
     public static function get_labels() {
         self::validate_call(self::get_labels_parameters(), func_get_args());
 
         return self::get_labels_raw();
     }
 
+    /**
+     * Returns the labels of the current user, without validating the call.
+     *
+     * @return array Result of the external function.
+     */
     public static function get_labels_raw() {
         $result = [];
 
@@ -323,6 +440,11 @@ class external extends external_api {
         return $result;
     }
 
+    /**
+     * Returns the description of the return value of the local_satsmail_get_labels external function.
+     *
+     * @return external_description Return value description.
+     */
     public static function get_labels_returns() {
         return new external_multiple_structure(
             new external_single_structure([
@@ -340,6 +462,11 @@ class external extends external_api {
         );
     }
 
+    /**
+     * Returns the description of the message query parameter.
+     *
+     * @return external_single_structure Parameter description.
+     */
     private static function message_query_parameters() {
         return new external_single_structure([
             'courseid' => new external_value(
@@ -438,6 +565,12 @@ class external extends external_api {
         ]);
     }
 
+    /**
+     * Validates a message query parameter and converts it to a message search.
+     *
+     * @param array $query Query parameters of the call.
+     * @return message_search Message search.
+     */
     private static function validate_query_parameter(array $query): message_search {
         $user = user::current();
 
@@ -498,12 +631,22 @@ class external extends external_api {
         return $search;
     }
 
+    /**
+     * Returns the description of the parameters of the local_satsmail_count_messages external function.
+     *
+     * @return external_function_parameters Parameter description.
+     */
     public static function count_messages_parameters() {
         return new external_function_parameters([
             'query' => self::message_query_parameters(),
         ]);
     }
 
+    /**
+     * Returns the number of messages that match a query.
+     *
+     * @return int Number of messages.
+     */
     public static function count_messages() {
         $params = self::validate_call(self::count_messages_parameters(), func_get_args());
 
@@ -512,10 +655,20 @@ class external extends external_api {
         return $search->count();
     }
 
+    /**
+     * Returns the description of the return value of the local_satsmail_count_messages external function.
+     *
+     * @return external_description Return value description.
+     */
     public static function count_messages_returns() {
         return new external_value(PARAM_INT, 'Number of messages');
     }
 
+    /**
+     * Returns the description of the parameters of the local_satsmail_search_messages external function.
+     *
+     * @return external_function_parameters Parameter description.
+     */
     public static function search_messages_parameters() {
         return new external_function_parameters([
             'query' => self::message_query_parameters(),
@@ -534,6 +687,11 @@ class external extends external_api {
         ]);
     }
 
+    /**
+     * Returns the messages that match a query.
+     *
+     * @return array Result of the external function.
+     */
     public static function search_messages() {
         $params = self::validate_call(self::search_messages_parameters(), func_get_args());
 
@@ -544,6 +702,13 @@ class external extends external_api {
         return self::search_messages_response($search->user, $messages);
     }
 
+    /**
+     * Converts a list of messages to the response of the search_messages function.
+     *
+     * @param user $user Current user.
+     * @param array $messages Messages to convert.
+     * @return array Result of the external function.
+     */
     public static function search_messages_response(user $user, array $messages) {
         global $PAGE;
         $renderer = $PAGE->get_renderer('local_satsmail');
@@ -617,6 +782,11 @@ class external extends external_api {
         return $result;
     }
 
+    /**
+     * Returns the description of the return value of the local_satsmail_search_messages external function.
+     *
+     * @return external_description Return value description.
+     */
     public static function search_messages_returns() {
         return new external_multiple_structure(
             new external_single_structure([
@@ -672,12 +842,22 @@ class external extends external_api {
         );
     }
 
+    /**
+     * Returns the description of the parameters of the local_satsmail_get_message external function.
+     *
+     * @return external_function_parameters Parameter description.
+     */
     public static function get_message_parameters() {
         return new external_function_parameters([
             'messageid' => new external_value(PARAM_INT, 'ID of the message'),
         ]);
     }
 
+    /**
+     * Returns the data of a message.
+     *
+     * @return array Result of the external function.
+     */
     public static function get_message() {
         $params = self::validate_call(self::get_message_parameters(), func_get_args());
 
@@ -692,6 +872,13 @@ class external extends external_api {
         return self::get_message_response($user, $message);
     }
 
+    /**
+     * Converts a message to the response of the get_message function.
+     *
+     * @param user $user Current user.
+     * @param message $message Message to convert.
+     * @return array Result of the external function.
+     */
     public static function get_message_response(user $user, message $message) {
         global $OUTPUT, $PAGE;
         $renderer = $PAGE->get_renderer('local_satsmail');
@@ -850,6 +1037,11 @@ class external extends external_api {
         return $result;
     }
 
+    /**
+     * Returns the description of the return value of the local_satsmail_get_message external function.
+     *
+     * @return external_description Return value description.
+     */
     public static function get_message_returns() {
         return new external_single_structure([
             'id' => new external_value(PARAM_INT, 'Id of the message'),
@@ -947,12 +1139,20 @@ class external extends external_api {
         ]);
     }
 
+    /**
+     * Returns the description of the parameters of the local_satsmail_view_message external function.
+     *
+     * @return external_function_parameters Parameter description.
+     */
     public static function view_message_parameters() {
         return new external_function_parameters([
             'messageid' => new external_value(PARAM_INT, 'ID of the message'),
         ]);
     }
 
+    /**
+     * Marks a message as viewed and triggers the corresponding event.
+     */
     public static function view_message() {
         $params = self::validate_call(self::view_message_parameters(), func_get_args());
 
@@ -975,10 +1175,20 @@ class external extends external_api {
         return null;
     }
 
+    /**
+     * Returns the description of the return value of the local_satsmail_view_message external function.
+     *
+     * @return external_description Return value description.
+     */
     public static function view_message_returns() {
         return null;
     }
 
+    /**
+     * Returns the description of the parameters of the local_satsmail_set_unread external function.
+     *
+     * @return external_function_parameters Parameter description.
+     */
     public static function set_unread_parameters() {
         return new external_function_parameters([
             'messageid' => new external_value(PARAM_INT, 'ID of the message'),
@@ -986,6 +1196,9 @@ class external extends external_api {
         ]);
     }
 
+    /**
+     * Sets the unread status of a message for the current user.
+     */
     public static function set_unread() {
         $params = self::validate_call(self::set_unread_parameters(), func_get_args());
 
@@ -1001,10 +1214,20 @@ class external extends external_api {
         return null;
     }
 
+    /**
+     * Returns the description of the return value of the local_satsmail_set_unread external function.
+     *
+     * @return external_description Return value description.
+     */
     public static function set_unread_returns() {
         return null;
     }
 
+    /**
+     * Returns the description of the parameters of the local_satsmail_set_starred external function.
+     *
+     * @return external_function_parameters Parameter description.
+     */
     public static function set_starred_parameters() {
         return new external_function_parameters([
             'messageid' => new external_value(PARAM_INT, 'ID of the message'),
@@ -1012,6 +1235,9 @@ class external extends external_api {
         ]);
     }
 
+    /**
+     * Sets the starred status of a message for the current user.
+     */
     public static function set_starred() {
         $params = self::validate_call(self::set_starred_parameters(), func_get_args());
 
@@ -1027,10 +1253,20 @@ class external extends external_api {
         return null;
     }
 
+    /**
+     * Returns the description of the return value of the local_satsmail_set_starred external function.
+     *
+     * @return external_description Return value description.
+     */
     public static function set_starred_returns() {
         return null;
     }
 
+    /**
+     * Returns the description of the parameters of the local_satsmail_set_deleted external function.
+     *
+     * @return external_function_parameters Parameter description.
+     */
     public static function set_deleted_parameters() {
         return new external_function_parameters([
             'messageid' => new external_value(PARAM_INT, 'ID of the message'),
@@ -1041,6 +1277,9 @@ class external extends external_api {
         ]);
     }
 
+    /**
+     * Sets the deleted status of a message for the current user.
+     */
     public static function set_deleted() {
         $params = self::validate_call(self::set_deleted_parameters(), func_get_args());
 
@@ -1064,10 +1303,20 @@ class external extends external_api {
         return null;
     }
 
+    /**
+     * Returns the description of the return value of the local_satsmail_set_deleted external function.
+     *
+     * @return external_description Return value description.
+     */
     public static function set_deleted_returns() {
         return null;
     }
 
+    /**
+     * Returns the description of the parameters of the local_satsmail_set_archived external function.
+     *
+     * @return external_function_parameters Parameter description.
+     */
     public static function set_archived_parameters() {
         return new external_function_parameters([
             'messageid' => new external_value(PARAM_INT, 'ID of the message'),
@@ -1075,6 +1324,9 @@ class external extends external_api {
         ]);
     }
 
+    /**
+     * Sets the archived status of a message for the current user.
+     */
     public static function set_archived() {
         $params = self::validate_call(self::set_archived_parameters(), func_get_args());
 
@@ -1090,16 +1342,29 @@ class external extends external_api {
         return null;
     }
 
+    /**
+     * Returns the description of the return value of the local_satsmail_set_archived external function.
+     *
+     * @return external_description Return value description.
+     */
     public static function set_archived_returns() {
         return null;
     }
 
+    /**
+     * Returns the description of the parameters of the local_satsmail_empty_trash external function.
+     *
+     * @return external_function_parameters Parameter description.
+     */
     public static function empty_trash_parameters() {
         return new external_function_parameters([
             'courseid' => new external_value(PARAM_INT, 'ID of the course', VALUE_DEFAULT, 0),
         ]);
     }
 
+    /**
+     * Permanently deletes the messages in the trash of the current user.
+     */
     public static function empty_trash() {
         $params = self::validate_call(self::empty_trash_parameters(), func_get_args());
 
@@ -1131,10 +1396,20 @@ class external extends external_api {
         return null;
     }
 
+    /**
+     * Returns the description of the return value of the local_satsmail_empty_trash external function.
+     *
+     * @return external_description Return value description.
+     */
     public static function empty_trash_returns() {
         return null;
     }
 
+    /**
+     * Returns the description of the parameters of the local_satsmail_create_label external function.
+     *
+     * @return external_function_parameters Parameter description.
+     */
     public static function create_label_parameters() {
         $colors = implode(', ', label::COLORS);
         return new external_function_parameters([
@@ -1149,6 +1424,11 @@ class external extends external_api {
         ]);
     }
 
+    /**
+     * Creates a label for the current user.
+     *
+     * @return int ID of the created label.
+     */
     public static function create_label() {
         $params = self::validate_call(self::create_label_parameters(), func_get_args());
 
@@ -1187,10 +1467,20 @@ class external extends external_api {
         return $label->id;
     }
 
+    /**
+     * Returns the description of the return value of the local_satsmail_create_label external function.
+     *
+     * @return external_description Return value description.
+     */
     public static function create_label_returns() {
         return new external_value(PARAM_INT, 'ID of the label');
     }
 
+    /**
+     * Returns the description of the parameters of the local_satsmail_update_label external function.
+     *
+     * @return external_function_parameters Parameter description.
+     */
     public static function update_label_parameters() {
         $colors = implode(', ', label::COLORS);
         return new external_function_parameters([
@@ -1200,6 +1490,9 @@ class external extends external_api {
         ]);
     }
 
+    /**
+     * Updates the name and colour of a label of the current user.
+     */
     public static function update_label() {
         $params = self::validate_call(self::update_label_parameters(), func_get_args());
 
@@ -1230,16 +1523,29 @@ class external extends external_api {
         return null;
     }
 
+    /**
+     * Returns the description of the return value of the local_satsmail_update_label external function.
+     *
+     * @return external_description Return value description.
+     */
     public static function update_label_returns() {
         return null;
     }
 
+    /**
+     * Returns the description of the parameters of the local_satsmail_delete_label external function.
+     *
+     * @return external_function_parameters Parameter description.
+     */
     public static function delete_label_parameters() {
         return new external_function_parameters([
             'labelid' => new external_value(PARAM_INT, 'ID of the label'),
         ]);
     }
 
+    /**
+     * Deletes a label of the current user.
+     */
     public static function delete_label() {
         $params = self::validate_call(self::delete_label_parameters(), func_get_args());
 
@@ -1255,10 +1561,20 @@ class external extends external_api {
         return null;
     }
 
+    /**
+     * Returns the description of the return value of the local_satsmail_delete_label external function.
+     *
+     * @return external_description Return value description.
+     */
     public static function delete_label_returns() {
         return null;
     }
 
+    /**
+     * Returns the description of the parameters of the local_satsmail_set_labels external function.
+     *
+     * @return external_function_parameters Parameter description.
+     */
     public static function set_labels_parameters() {
         return new external_function_parameters([
             'messageid' => new external_value(PARAM_INT, 'ID of the message'),
@@ -1271,6 +1587,9 @@ class external extends external_api {
         ]);
     }
 
+    /**
+     * Sets the labels of a message for the current user.
+     */
     public static function set_labels() {
         $params = self::validate_call(self::set_labels_parameters(), func_get_args());
 
@@ -1293,16 +1612,31 @@ class external extends external_api {
         return null;
     }
 
+    /**
+     * Returns the description of the return value of the local_satsmail_set_labels external function.
+     *
+     * @return external_description Return value description.
+     */
     public static function set_labels_returns() {
         return null;
     }
 
+    /**
+     * Returns the description of the parameters of the local_satsmail_get_roles external function.
+     *
+     * @return external_function_parameters Parameter description.
+     */
     public static function get_roles_parameters() {
         return new external_function_parameters([
             'courseid' => new external_value(PARAM_INT, 'ID of the course'),
         ]);
     }
 
+    /**
+     * Returns the roles of the users of a course.
+     *
+     * @return array Result of the external function.
+     */
     public static function get_roles() {
         $params = self::validate_call(self::get_roles_parameters(), func_get_args());
 
@@ -1320,6 +1654,11 @@ class external extends external_api {
         return $result;
     }
 
+    /**
+     * Returns the description of the return value of the local_satsmail_get_roles external function.
+     *
+     * @return external_description Return value description.
+     */
     public static function get_roles_returns() {
         return new external_multiple_structure(
             new external_single_structure([
@@ -1329,12 +1668,22 @@ class external extends external_api {
         );
     }
 
+    /**
+     * Returns the description of the parameters of the local_satsmail_get_groups external function.
+     *
+     * @return external_function_parameters Parameter description.
+     */
     public static function get_groups_parameters() {
         return new external_function_parameters([
             'courseid' => new external_value(PARAM_INT, 'ID of the course'),
         ]);
     }
 
+    /**
+     * Returns the groups of a course that the current user can address.
+     *
+     * @return array Result of the external function.
+     */
     public static function get_groups() {
         $params = self::validate_call(self::get_groups_parameters(), func_get_args());
 
@@ -1352,6 +1701,11 @@ class external extends external_api {
         return $result;
     }
 
+    /**
+     * Returns the description of the return value of the local_satsmail_get_groups external function.
+     *
+     * @return external_description Return value description.
+     */
     public static function get_groups_returns() {
         return new external_multiple_structure(
             new external_single_structure([
@@ -1361,6 +1715,11 @@ class external extends external_api {
         );
     }
 
+    /**
+     * Returns the description of the parameters of the local_satsmail_search_users external function.
+     *
+     * @return external_function_parameters Parameter description.
+     */
     public static function search_users_parameters() {
         return new external_function_parameters([
             'query' => new external_single_structure([
@@ -1409,6 +1768,11 @@ class external extends external_api {
         ]);
     }
 
+    /**
+     * Returns the users of a course that match a query.
+     *
+     * @return array Result of the external function.
+     */
     public static function search_users() {
         $params = self::validate_call(self::search_users_parameters(), func_get_args());
 
@@ -1463,6 +1827,14 @@ class external extends external_api {
         return self::search_users_response($course, $users, $cohortonlyids);
     }
 
+    /**
+     * Converts a list of users to the response of the search_users function.
+     *
+     * @param course $course Course of the search.
+     * @param array $users Users to convert.
+     * @param array $cohortonlyids IDs of users that are only visible as cohort members.
+     * @return array Result of the external function.
+     */
     public static function search_users_response(course $course, array $users, array $cohortonlyids = []) {
         $result = [];
 
@@ -1482,6 +1854,11 @@ class external extends external_api {
         return $result;
     }
 
+    /**
+     * Returns the description of the return value of the local_satsmail_search_users external function.
+     *
+     * @return external_description Return value description.
+     */
     public static function search_users_returns() {
         return new external_multiple_structure(
             new external_single_structure([
@@ -1500,12 +1877,22 @@ class external extends external_api {
         );
     }
 
+    /**
+     * Returns the description of the parameters of the local_satsmail_get_message_form external function.
+     *
+     * @return external_function_parameters Parameter description.
+     */
     public static function get_message_form_parameters() {
         return new external_function_parameters([
             'messageid' => new external_value(PARAM_INT, 'Id of the message'),
         ]);
     }
 
+    /**
+     * Returns the data needed to display the form of a new message.
+     *
+     * @return array Result of the external function.
+     */
     public static function get_message_form() {
         global $CFG, $OUTPUT, $PAGE;
 
@@ -1557,6 +1944,11 @@ class external extends external_api {
         ];
     }
 
+    /**
+     * Returns the description of the return value of the local_satsmail_get_message_form external function.
+     *
+     * @return external_description Return value description.
+     */
     public static function get_message_form_returns() {
         return new external_single_structure([
             'draftitemid' => new external_value(PARAM_INT, 'Id of the file draft item.'),
@@ -1566,12 +1958,22 @@ class external extends external_api {
         ]);
     }
 
+    /**
+     * Returns the description of the parameters of the local_satsmail_create_message external function.
+     *
+     * @return external_function_parameters Parameter description.
+     */
     public static function create_message_parameters() {
         return new external_function_parameters([
             'courseid' => new external_value(PARAM_INT, 'ID of the course'),
         ]);
     }
 
+    /**
+     * Creates a draft message in a course.
+     *
+     * @return int ID of the created draft.
+     */
     public static function create_message() {
         $params = self::validate_call(self::create_message_parameters(), func_get_args());
 
@@ -1589,10 +1991,20 @@ class external extends external_api {
         return $message->id;
     }
 
+    /**
+     * Returns the description of the return value of the local_satsmail_create_message external function.
+     *
+     * @return external_description Return value description.
+     */
     public static function create_message_returns() {
         return new external_value(PARAM_INT, 'Id of the created message');
     }
 
+    /**
+     * Returns the description of the parameters of the local_satsmail_reply_message external function.
+     *
+     * @return external_function_parameters Parameter description.
+     */
     public static function reply_message_parameters() {
         return new external_function_parameters([
             'messageid' => new external_value(PARAM_INT, 'Id of the message to reply.'),
@@ -1600,6 +2012,11 @@ class external extends external_api {
         ]);
     }
 
+    /**
+     * Creates a draft message that replies to a message.
+     *
+     * @return int ID of the created draft.
+     */
     public static function reply_message() {
         $params = self::validate_call(self::reply_message_parameters(), func_get_args());
 
@@ -1617,16 +2034,31 @@ class external extends external_api {
         return $message->id;
     }
 
+    /**
+     * Returns the description of the return value of the local_satsmail_reply_message external function.
+     *
+     * @return external_description Return value description.
+     */
     public static function reply_message_returns() {
         return new external_value(PARAM_INT, 'Id of the created message');
     }
 
+    /**
+     * Returns the description of the parameters of the local_satsmail_forward_message external function.
+     *
+     * @return external_function_parameters Parameter description.
+     */
     public static function forward_message_parameters() {
         return new external_function_parameters([
             'messageid' => new external_value(PARAM_INT, 'Id of the message to reply.'),
         ]);
     }
 
+    /**
+     * Creates a draft message that forwards a message.
+     *
+     * @return int ID of the created draft.
+     */
     public static function forward_message() {
         $params = self::validate_call(self::forward_message_parameters(), func_get_args());
 
@@ -1644,10 +2076,20 @@ class external extends external_api {
         return $message->id;
     }
 
+    /**
+     * Returns the description of the return value of the local_satsmail_forward_message external function.
+     *
+     * @return external_description Return value description.
+     */
     public static function forward_message_returns() {
         return new external_value(PARAM_INT, 'Id of the created message');
     }
 
+    /**
+     * Returns the description of the parameters of the local_satsmail_update_message external function.
+     *
+     * @return external_function_parameters Parameter description.
+     */
     public static function update_message_parameters() {
         return new external_function_parameters([
             'messageid' => new external_value(PARAM_INT, 'Id of the message'),
@@ -1664,6 +2106,9 @@ class external extends external_api {
         ]);
     }
 
+    /**
+     * Updates the content and recipients of a draft message.
+     */
     public static function update_message() {
         $params = self::validate_call(self::update_message_parameters(), func_get_args());
 
@@ -1696,16 +2141,29 @@ class external extends external_api {
         return null;
     }
 
+    /**
+     * Returns the description of the return value of the local_satsmail_update_message external function.
+     *
+     * @return external_description Return value description.
+     */
     public static function update_message_returns() {
         return null;
     }
 
+    /**
+     * Returns the description of the parameters of the local_satsmail_send_message external function.
+     *
+     * @return external_function_parameters Parameter description.
+     */
     public static function send_message_parameters() {
         return new external_function_parameters([
             'messageid' => new external_value(PARAM_INT, 'Id of the message', VALUE_DEFAULT, 0),
         ]);
     }
 
+    /**
+     * Sends a draft message to its recipients.
+     */
     public static function send_message() {
         global $PAGE;
 
@@ -1781,6 +2239,11 @@ class external extends external_api {
         return null;
     }
 
+    /**
+     * Returns the description of the return value of the local_satsmail_send_message external function.
+     *
+     * @return external_description Return value description.
+     */
     public static function send_message_returns() {
         return null;
     }
@@ -1803,4 +2266,3 @@ class external extends external_api {
         return self::validate_parameters($description, $params);
     }
 }
-

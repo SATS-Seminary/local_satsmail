@@ -1,13 +1,34 @@
 <?php
-/*
-South African Theological Seminary
- */
+// This file is part of Moodle - https://moodle.org/
+//
+// Moodle is free software: you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation, either version 3 of the License, or
+// (at your option) any later version.
+//
+// Moodle is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU General Public License for more details.
+//
+// You should have received a copy of the GNU General Public License
+// along with Moodle.  If not, see <https://www.gnu.org/licenses/>.
 
+/**
+ * Plugin renderer.
+ *
+ * @package    local_satsmail
+ * @copyright  2026 South African Theological Seminary
+ * @license    https://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
 namespace local_satsmail\output;
 
 use local_satsmail\message;
 use local_satsmail\user;
 
+/**
+ * Renderer of the plugin.
+ */
 class renderer extends \plugin_renderer_base {
     /**
      * Returns the URL of the icon representing the format of a file.
@@ -186,7 +207,8 @@ class renderer extends \plugin_renderer_base {
         $notification->subject = strings::get('notificationsubject', $sitename);
         $notification->fullmessage = $this->render_from_template('local_satsmail/notification_text', $templatecontext);
         $notification->fullmessageformat = FORMAT_PLAIN;
-        $notification->fullmessagehtml = $this->render_from_template('local_satsmail/notification_html',
+        $notification->fullmessagehtml = $this->render_from_template(
+            'local_satsmail/notification_html',
             array_merge($templatecontext, [
                 'courseurl' => $course->url(),
                 'senderurl' => $sender->profile_url($course),
@@ -253,7 +275,7 @@ class renderer extends \plugin_renderer_base {
      *
      * CSS files are included in the head.
      *
-     * @param $file Source file name, e.g. "src/view.ts"
+     * @param string $file Source file name, e.g. "src/view.ts".
      * @return string
      */
     public function svelte_script(string $file): string {
@@ -301,4 +323,3 @@ class renderer extends \plugin_renderer_base {
         return $html;
     }
 }
-

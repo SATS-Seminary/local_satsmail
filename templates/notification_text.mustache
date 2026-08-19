@@ -1,10 +1,23 @@
 {{!
-South African Theological Seminary
+    This file is part of Moodle - https://moodle.org/
+
+    Moodle is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    Moodle is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with Moodle.  If not, see <https://www.gnu.org/licenses/>.
 }}
 {{!
-    @template local_satsmail/notification_html
+    @template local_satsmail/notification_text
 
-    Text notification template.
+    Plain text notification template.
 
     Classes required for JS:
     * none
@@ -13,13 +26,34 @@ South African Theological Seminary
     * none
 
     Context variables required for this template:
-    * coursename
-    * sendername
-    * date
-    * subject
-    * content
-    * attachments: [{path, size, url}]
-    * viewurl
+    * coursename string Name of the course of the message
+    * sendername string Full name of the sender of the message
+    * date string Formatted date and time of the message
+    * subject string Subject of the message
+    * content string Formatted content of the message
+    * hasattachments bool The message has attachments
+    * attachments array List of attachments with path, size, url and icon
+    * canreply bool The recipient can reply to the notification by email
+    * viewurl string URL of the message
+
+    Example context (json):
+    {
+        "coursename": "Introduction to Theology",
+        "sendername": "Jane Doe",
+        "date": "12 March 2026, 10:15",
+        "subject": "Assignment feedback",
+        "content": "Your feedback is attached.",
+        "hasattachments": true,
+        "attachments": [
+            {
+                "path": "feedback.pdf",
+                "size": "12.3KB",
+                "url": "https://example.com/pluginfile.php/1/local_satsmail/message/1/feedback.pdf"
+            }
+        ],
+        "canreply": true,
+        "viewurl": "https://example.com/local/satsmail/view.php?t=inbox&m=1"
+    }
 }}
 {{#str}} from, local_satsmail {{/str}}: {{{ sendername }}}
 {{#str}} subject, local_satsmail {{/str}}:  {{{ subject }}}
