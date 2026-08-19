@@ -16,12 +16,7 @@ class renderer extends \plugin_renderer_base {
      * @return string
      */
     public function file_icon_url(\stored_file $file): string {
-        global $CFG;
-
-        // Size is deprecated since Moodle 4.3.
-        $size = $CFG->branch >= 403 ? null : 24;
-
-        return $this->image_url(file_file_icon($file, $size))->out(false);
+        return $this->image_url(file_file_icon($file))->out(false);
     }
 
     /**

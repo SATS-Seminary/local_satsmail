@@ -639,8 +639,8 @@ final class external_test extends test\testcase {
             'deleted' => (bool) $message2->deleted($user1),
             'course' => [
                 'id' => $course->id,
-                'shortname' => external_format_string($course->shortname, $course->get_context()),
-                'fullname' => external_format_string($course->fullname, $course->get_context()),
+                'shortname' => \core_external\util::format_string($course->shortname, $course->get_context()),
+                'fullname' => \core_external\util::format_string($course->fullname, $course->get_context()),
                 'visible' => $course->visible,
                 'groupmode' => $course->groupmode,
                 'canmailall' => $user1->can_mail_all($course),

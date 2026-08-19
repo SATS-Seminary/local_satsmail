@@ -1,5 +1,15 @@
 # Changelog
 
+## [2.2.8] - 2026-08-19
+
+### Changed
+
+- Minimum supported Moodle version is now 5.0 (`$plugin->requires` bumped from 4.1).
+- Web service code migrated off the deprecated global external API to the `core_external` namespace: `external_api`, `external_function_parameters`, `external_single_structure`, `external_multiple_structure`, `external_value` and `external_format_value` are now imported from `core_external`, and `external_format_string()` (deprecated since 4.4, MDL-76583) is replaced by `\core_external\util::format_string()`. This removes the "Deprecation: external_format_string has been deprecated" coding error under Moodle 5.3 dev.
+- Removed the manual `require_once($CFG->libdir . '/externallib.php')` and the stale `classpath` entries in `db/services.php` that pointed at a non-existent `externallib.php`; the external class is autoloaded.
+- Dropped `$CFG->branch` compatibility shims that are no longer needed on 5.0+: `cron_setup_user()` (final-deprecated) in `cli/generate.php` is now always `\core\cron::setup_user()`, and the deprecated size argument to `file_file_icon()` / `file_extension_icon()` is no longer passed.
+- `deploy.sh` accepts a Moodle root as its first argument and detects the Moodle 5.1+ `public/` web root, deploying to `public/local/satsmail` when present.
+
 ## [2.2.7] - 2026-05-27
 
 ### Changed

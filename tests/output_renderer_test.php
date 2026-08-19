@@ -27,7 +27,7 @@ final class output_renderer_test extends test\testcase {
     }
 
     public function test_file_icon_url(): void {
-        global $CFG, $PAGE;
+        global $PAGE;
 
         $generator = self::getDataGenerator();
         $user = new user($generator->create_user());
@@ -38,10 +38,8 @@ final class output_renderer_test extends test\testcase {
         $file2 = self::create_draft_file($data->draftitemid, 'file2.html', 'File content');
 
         $renderer = $PAGE->get_renderer('local_satsmail');
-
-        $size = $CFG->branch >= 403 ? null : 24; // Size is deprecated since Moodle 4.3.
-        self::assertEquals($renderer->image_url(file_extension_icon('file1.txt', $size)), $renderer->file_icon_url($file1));
-        self::assertEquals($renderer->image_url(file_extension_icon('file2.html', $size)), $renderer->file_icon_url($file2));
+        self::assertEquals($renderer->image_url(file_extension_icon('file1.txt')), $renderer->file_icon_url($file1));
+        self::assertEquals($renderer->image_url(file_extension_icon('file2.html')), $renderer->file_icon_url($file2));
     }
 
     public function test_formatted_message_content(): void {
