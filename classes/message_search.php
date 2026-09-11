@@ -182,7 +182,8 @@ class message_search {
 
         [$fromsql, $wheresql, $ordersql, $params] = $this->get_base_sql();
 
-        $sql = "SELECT i.courseid, COUNT(*) AS num $fromsql $wheresql GROUP BY i.courseid";
+        // Without ORDER BY the database may return groups in any order.
+        $sql = "SELECT i.courseid, COUNT(*) AS num $fromsql $wheresql GROUP BY i.courseid ORDER BY i.courseid";
 
         $result = [];
         foreach ($DB->get_records_sql($sql, $params) as $record) {
@@ -202,7 +203,9 @@ class message_search {
 
         [$fromsql, $wheresql, $ordersql, $params] = $this->get_base_sql(true);
 
-        $sql = "SELECT MIN(i.id), i.labelid, i.courseid, COUNT(*) AS num $fromsql $wheresql GROUP BY i.labelid, i.courseid";
+        // Without ORDER BY the database may return groups in any order.
+        $sql = "SELECT MIN(i.id), i.labelid, i.courseid, COUNT(*) AS num $fromsql $wheresql"
+            . ' GROUP BY i.labelid, i.courseid ORDER BY i.labelid, i.courseid';
 
         $result = [];
         foreach ($DB->get_records_sql($sql, $params) as $record) {

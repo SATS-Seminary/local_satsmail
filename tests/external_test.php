@@ -341,6 +341,15 @@ final class external_test extends test\testcase {
             $result = external::get_labels();
             external::validate_parameters(external::get_labels_returns(), $result);
             self::assertEquals($expected, $result);
+
+            // The expectation above is built from the same kind of query, so it
+            // cannot catch an unordered result on its own; pin the order down.
+            foreach ($result as $labelresult) {
+                $courseids = array_column($labelresult['courses'], 'id');
+                $sortedids = $courseids;
+                sort($sortedids);
+                self::assertSame($sortedids, $courseids, 'Courses must be listed in course ID order.');
+            }
         }
 
         // User with no labels.
