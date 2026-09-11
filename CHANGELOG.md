@@ -1,5 +1,11 @@
 # Changelog
 
+## [2.2.9] - 2026-09-11
+
+### Fixed
+
+- Recipients of a message containing a SATS Recorder recording saw "this recording has expired or is no longer available". The compose editor runs in the system context, where recipients have no enrolment, so `tiny_satsrecorder` refused them. The plugin now listens to `tiny_satsrecorder`'s `recording_access` hook and grants access to anyone who may see the attachments of a message the recording was sent in, provided the sender was entitled to it — its owner, or someone it had been sent to. Replies and forwards therefore carry it on, while a key merely pasted into a message by someone who never received it grants nothing. Needs `tiny_satsrecorder` 2026091100 or later; harmless without it. Applies to messages already sent.
+
 ## [2.2.8] - 2026-08-19
 
 ### Changed

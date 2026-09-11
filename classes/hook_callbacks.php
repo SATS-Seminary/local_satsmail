@@ -1,5 +1,5 @@
 <?php
-// This file is part of Moodle - https://moodle.org/
+// This file is part of Moodle - http://moodle.org/
 //
 // Moodle is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -12,19 +12,32 @@
 // GNU General Public License for more details.
 //
 // You should have received a copy of the GNU General Public License
-// along with Moodle.  If not, see <https://www.gnu.org/licenses/>.
+// along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Plugin version information.
+ * Hook callbacks.
  *
  * @package    local_satsmail
  * @copyright  2026 South African Theological Seminary
  * @license    https://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-defined('MOODLE_INTERNAL') || die();
+namespace local_satsmail;
 
-$plugin->version = 2026091100;
-$plugin->requires = 2025041400; // Moodle 5.0.
-$plugin->component = 'local_satsmail';
-$plugin->maturity = MATURITY_STABLE;
-$plugin->release = '2.2.9';
+/**
+ * Hook callbacks.
+ */
+class hook_callbacks {
+    /**
+     * Let message recipients play SATS Recorder recordings sent to them.
+     *
+     * Only dispatched when tiny_satsrecorder is installed; the hook class is
+     * never resolved otherwise.
+     *
+     * @param \tiny_satsrecorder\hook\recording_access $hook
+     */
+    public static function satsrecorder_recording_access(\tiny_satsrecorder\hook\recording_access $hook): void {
+        if (recording_access::user_can_view($hook->userid, $hook->ownerid, $hook->s3key)) {
+            $hook->grant();
+        }
+    }
+}
